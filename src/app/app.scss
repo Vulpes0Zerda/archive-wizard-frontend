@@ -1,0 +1,7 @@
+:host {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  grid-auto-flow: column;
+  height: 100vh;
+  width: 100vw;
+}
