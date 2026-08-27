@@ -15,6 +15,7 @@ export class ApiService {
 
   //api methods
   public getShelfs(userId: Number): Observable<Array<GetShelf>>{
+    console.log( this.http.get<Array<GetShelf>>(`${this.baseUrl}/shelf-manager/get-overview/${userId}`))
     return this.http.get<Array<GetShelf>>(`${this.baseUrl}/shelf-manager/get-overview/${userId}`)
   }
 

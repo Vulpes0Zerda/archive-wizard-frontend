@@ -1,6 +1,6 @@
 <nav>
   <ul>
-    @for (shelf of shelfs; track shelf.id) {
+    @for (shelf of shelfs(); track shelf.id) {
       <li>
         <a class="" routerLink="./{{ shelf.name }}">{{ shelf.name }}</a>
       </li>
