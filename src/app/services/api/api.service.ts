@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { GetShelf } from '../models/GetShelf';
-import { PostShelf } from '../models/PostShelf';
-import { PostRegistration } from '../models/PostRegistration';
+import { GetShelf } from '../request/GetShelf';
+import { PostShelf } from '../request/PostShelf';
+import { RegistrationRequest } from '../request/RegistrationRequest';
+import { LoginRequest } from '../request/LoginRequest';
+import { JwtToken } from '../response/JwtToken';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,6 @@ export class ApiService {
 
   //api methods
   public getShelfs(userId: Number): Observable<Array<GetShelf>>{
-    console.log( this.http.get<Array<GetShelf>>(`${this.baseUrl}/shelf-manager/get-overview/${userId}`))
     return this.http.get<Array<GetShelf>>(`${this.baseUrl}/shelf-manager/get-overview/${userId}`)
   }
 
@@ -23,7 +24,12 @@ export class ApiService {
     return this.http.post<Array<PostShelf>>(`${this.baseUrl}/shelf-manager/create-shelf`, newShelf)
   }
 
-  public postUser(newUser: PostRegistration): Observable<PostRegistration>{
-    return this.http.post<PostRegistration>(`${this.baseUrl}/user-manager/register-user`, newUser)
+  public registration(registrationData: RegistrationRequest): Observable<JwtToken>{
+    return this.http.post<JwtToken>(`${this.baseUrl}/auth-manager/register`, registrationData)
   }
+
+  public login(loginData: LoginRequest): Observable<JwtToken>{
+    return this.http.post<JwtToken>(`${this.baseUrl}/auth-manager/login`,loginData)
+  }
+
 }

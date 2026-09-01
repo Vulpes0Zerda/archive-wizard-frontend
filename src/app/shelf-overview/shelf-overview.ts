@@ -2,7 +2,7 @@ import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { shelfTestJSON } from '../services/example-json/shelfTestJson';
 import { ApiService } from '../services/api/api.service';
-import { GetShelf } from '../services/models/GetShelf';
+import { GetShelf } from '../services/request/GetShelf';
 
 @Component({
   selector: 'app-shelf-overview',

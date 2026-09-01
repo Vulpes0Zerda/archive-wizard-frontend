@@ -1,4 +1,4 @@
-export type PostRegistration = {
+export type RegistrationRequest = {
   name: string;
   eMail: string;
   password: string;

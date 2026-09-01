@@ -1,5 +1,9 @@
-<label for="emailFormField">E-Mail:</label>
-<input id="emailFormField" type="text" [formControl]="emailControl"/>
+<form [formRoot]="loginForm">
+  <label for="emailFormField">E-Mail:</label>
+  <input type="email" [formField]="loginForm.email" pattern="{pattern}" id="emailFormField"/>
 
-<label for="passwordFormField">Password:</label>
-<input id="passwordFormField" type="text" [formControl]="passwordControl"/>
+  <label for="passwordFormField">Password:</label>
+  <input  type="password" [formField]="loginForm.password" id="passwordFormField"/>
+
+  <button type="submit">login</button>
+</form>
