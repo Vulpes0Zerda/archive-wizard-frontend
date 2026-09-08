@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { form, FormField, FormRoot, required } from '@angular/forms/signals';
+import { form, FormField, FormRoot, pattern, required } from '@angular/forms/signals';
 import { ApiService } from '../services/api/api.service';
 
 @Component({
@@ -9,7 +9,6 @@ import { ApiService } from '../services/api/api.service';
   styleUrl: './authorization.scss',
 })
 export class Authorization {
-  protected static pattern: String = "/^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_+\-]@([a-z0-9][a-z0-9\-]*\.)+[a-z]{2,}$/i;"
 
   protected apiService : ApiService;
   
@@ -27,13 +26,15 @@ export class Authorization {
     this.loginModel,
     (schemaPath) => {
     required(schemaPath.email);
+    pattern(schemaPath.email, /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_+\-]@([a-z0-9][a-z0-9\-]*\.)+[a-z]{2,}$/i);
     required(schemaPath.password);
-    },
-    {
-      submission: {
-        action: (field)=> {return this.apiService.login({email: field().value().email, password: field().value().password})}
-        }
-      }
-    }
-  );
-}
+    })
+
+  onSubmit(event: Event){
+    event.preventDefault();
+    this.apiService.login(this.loginModel())
+
+    
+  }
+};
+

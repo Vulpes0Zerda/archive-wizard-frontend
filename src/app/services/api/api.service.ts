@@ -29,7 +29,7 @@ export class ApiService {
   }
 
   public login(loginData: LoginRequest): Observable<JwtToken>{
-    return this.http.post<JwtToken>(`${this.baseUrl}/auth-manager/login`,loginData)
+    return this.http.post<JwtToken>(`${this.baseUrl}/auth-manager/login`, loginData)
   }
 
 }
