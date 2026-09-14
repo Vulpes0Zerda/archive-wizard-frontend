@@ -1,35 +1,22 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaderResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { GetShelf } from '../request/GetShelf';
-import { PostShelf } from '../request/PostShelf';
-import { RegistrationRequest } from '../request/RegistrationRequest';
-import { LoginRequest } from '../request/LoginRequest';
-import { JwtToken } from '../response/JwtToken';
+import { AuthApi } from './auth.api';
+import { UserApi } from './user.api';
+import { CategoryGroupApi } from './category-group.api';
+import { ShelfApi } from './shelf.api';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiService {
-  private baseUrl = "http://localhost:8080" 
+  public static BASE_URL = 'http://localhost:8080';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    public readonly auth: AuthApi,
+    public readonly user: UserApi,
+    public readonly categoryGroup: CategoryGroupApi,
+    public readonly shelf: ShelfApi,
+  ) {}
 
   //api methods
-  public getShelfs(userId: Number): Observable<Array<GetShelf>>{
-    return this.http.get<Array<GetShelf>>(`${this.baseUrl}/shelf-manager/get-overview/${userId}`)
-  }
-
-  public postShelf(newShelf : PostShelf): Observable<Array<PostShelf>>{
-    return this.http.post<Array<PostShelf>>(`${this.baseUrl}/shelf-manager/create-shelf`, newShelf)
-  }
-
-  public registration(registrationData: RegistrationRequest): Observable<JwtToken>{
-    return this.http.post<JwtToken>(`${this.baseUrl}/auth-manager/register`, registrationData)
-  }
-
-  public login(loginData: LoginRequest): Observable<JwtToken>{
-    return this.http.post<JwtToken>(`${this.baseUrl}/auth-manager/login`, loginData)
-  }
-
 }
