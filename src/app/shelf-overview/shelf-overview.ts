@@ -1,8 +1,7 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { shelfTestJSON } from '../services/example-json/shelfTestJson';
 import { ApiService } from '../services/api/api.service';
-import { GetShelf } from '../services/request/GetShelf';
+import { Shelf } from '../services/model/Shelf';
 
 @Component({
   selector: 'app-shelf-overview',
@@ -11,18 +10,13 @@ import { GetShelf } from '../services/request/GetShelf';
   styleUrl: './shelf-overview.scss',
 })
 export class ShelfOverview implements OnInit {
-  protected shelfs: WritableSignal<Array<GetShelf>> = signal(new Array());
+  protected shelfs: WritableSignal<Shelf.Response.PostSingle> = signal(new Array());
 
-  public constructor(private apiService: ApiService){} 
+  public constructor() {}
 
   ngOnInit(): void {
-    this.loadShelf()
+    this.loadShelf();
   }
 
-  public loadShelf():void{
-    this.apiService.getShelfs(3).subscribe({
-      next: (data)=>{this.shelfs.set(data)}, 
-      error: (error)=> {new Error(error)}
-    }); //TODO: 1 has to be changed
-  }
+  public loadShelf(): void {}
 }
