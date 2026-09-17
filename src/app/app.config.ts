@@ -10,14 +10,13 @@ import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
 import { withNgxsWebSocketPlugin } from '@ngxs/websocket-plugin';
 import { provideStore } from '@ngxs/store';
 import { AuthState } from './services/state/auth/auth.state';
-import { UserState } from './services/state/user/user.state';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideStore(
-      [AuthState, UserState],
+      [AuthState],
       withNgxsReduxDevtoolsPlugin(),
       withNgxsFormPlugin(),
       withNgxsLoggerPlugin(),
