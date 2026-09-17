@@ -1,7 +1,8 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, OnInit, Signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ApiService } from '../services/api/api.service';
-import { Shelf } from '../services/model/Shelf';
+import { Store } from '@ngxs/store';
+import { ApiCallStatus } from '../services/state/ApiCallStatus';
+import { AuthState } from '../services/state/auth/auth.state';
 
 @Component({
   selector: 'app-shelf-overview',
@@ -10,13 +11,18 @@ import { Shelf } from '../services/model/Shelf';
   styleUrl: './shelf-overview.scss',
 })
 export class ShelfOverview implements OnInit {
-  protected shelfs: WritableSignal<Shelf.Response.PostSingle> = signal(new Array());
 
-  public constructor() {}
+  protected readonly API_STATUS_TYPE: typeof ApiCallStatus = ApiCallStatus;
+  protected apiStatus: Signal<ApiCallStatus>;
+
+  public constructor(protected store: Store) {
+    this.apiStatus = store.selectSignal<ApiCallStatus>(AuthState.getStatus)
+  }
 
   ngOnInit(): void {
     this.loadShelf();
   }
 
   public loadShelf(): void {}
+
 }

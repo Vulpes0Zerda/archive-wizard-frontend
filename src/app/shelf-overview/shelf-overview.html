@@ -1,9 +1,14 @@
-<nav>
+<nav> 
+  @if(apiStatus() === API_STATUS_TYPE.SUCCESS){
+    <button type="button" class="logoutButton authButton">Logout</button>} 
+  @else {
+    <button type="button" class="loginButton authButton"  routerLink="/login">Login</button>}
+  
   <ul>
-    @for (shelf of shelfs(); track shelf.id) {
+    <!-- @for (shelf of shelfs(); track shelf.id) {
       <li>
         <a class="" routerLink="./{{ shelf.name }}">{{ shelf.name }}</a>
       </li>
-    }
+    } -->
   </ul>
 </nav>
