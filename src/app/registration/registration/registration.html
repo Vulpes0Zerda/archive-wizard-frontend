@@ -1,0 +1,12 @@
+<form (submit)="onSubmit($event)">
+  <label for="emailFormField">E-Mail:</label>
+  <input type="email" [formField]="registrationForm.email" id="emailFormField" />
+
+  <label for="passwordFormField">Password:</label>
+  <input type="password" [formField]="registrationForm.password" id="passwordFormField" />
+
+  <label for="nameFormField">The Name with which you want to be adressed:</label>
+  <input type="text" [formField]="registrationForm.name" id="nameFormField" />
+
+  <button type="submit">Register</button>
+</form>

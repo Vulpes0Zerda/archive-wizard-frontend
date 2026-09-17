@@ -1,10 +1,15 @@
 import { Routes } from '@angular/router';
-import { Authorization } from './authorization/authorization';
+import { Login } from './login/login';
+import { Registration } from './registration/registration/registration';
 
 export const routes: Routes = [
   {
-    path: 'login', 
-    component: Authorization
+    path: 'login',
+    component: Login,
+  },
+  {
+    path: 'registration',
+    component: Registration,
   },
   {
     path: '*',
