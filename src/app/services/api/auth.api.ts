@@ -16,6 +16,7 @@ export class AuthApi {
     return this.http.post<Auth.Response.Registration>(
       `${ApiService.BASE_URL}/auth-manager/register`,
       registrationData,
+      { withCredentials: true },
     );
   }
 
@@ -23,14 +24,21 @@ export class AuthApi {
     return this.http.post<Auth.Response.Login>(
       `${ApiService.BASE_URL}/auth-manager/login`,
       loginData,
+      { withCredentials: true },
     );
   }
 
-  public refresh(): Observable<HttpErrorResponse> {
-    return this.http.post<HttpErrorResponse>(`${ApiService.BASE_URL}/auth-manager/refresh`, null);
+  public refresh(): Observable<Auth.Response.Refresh> {
+    return this.http.post<Auth.Response.Refresh>(
+      `${ApiService.BASE_URL}/auth-manager/refresh`,
+      null,
+      { withCredentials: true },
+    );
   }
 
   public logout(): Observable<HttpErrorResponse> {
-    return this.http.post<HttpErrorResponse>(`${ApiService.BASE_URL}/auth-manager/logout`, null);
+    return this.http.post<HttpErrorResponse>(`${ApiService.BASE_URL}/auth-manager/logout`, null, {
+      withCredentials: true,
+    });
   }
 }
