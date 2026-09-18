@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { ApiCallStatus } from '../services/state/ApiCallStatus';
 import { AuthState } from '../services/state/auth/auth.state';
+import { AuthActions } from '../services/state/auth/auth.actions';
 
 @Component({
   selector: 'app-shelf-overview',
@@ -21,6 +22,10 @@ export class ShelfOverview implements OnInit {
 
   ngOnInit(): void {
     this.loadShelf();
+  }
+
+  public logOut() : void {
+    this.store.dispatch(new AuthActions.Logout())
   }
 
   public loadShelf(): void {}
