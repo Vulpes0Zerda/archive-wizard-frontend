@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { Login } from './login/login';
-import { Registration } from './registration/registration/registration';
+import { Registration } from './registration/registration';
 
 export const routes: Routes = [
   {
@@ -12,7 +12,7 @@ export const routes: Routes = [
     component: Registration,
   },
   {
-    path: '*',
+    path: 'shelf',
     children: [
       {
         path: '*',
