@@ -1,9 +1,15 @@
 <nav>
-  @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
-    <button type="button" class="logoutButton authButton">Logout</button>
-  } @else {
-    <button type="button" class="loginButton authButton" routerLink="/login">Login</button>
-  }
+  <div class="grid grid-cols-2 grid-rows-none">
+    @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
+      <button type="button" class="logoutButton authButton" (click)="logOut()">Logout</button>
+    } @else {
+      <button type="button" class="loginButton authButton" routerLink="/login">Login</button>
+    }
+
+    <h1>
+      <i>Archive<br />Wizzard</i>
+    </h1>
+  </div>
 
   <ul>
     @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
@@ -13,7 +19,15 @@
         </li>
       }
       <li>
-        <a class="button" (click)="addShelf({ categoryGroupId: 1, name: 'NewShelf', position: 1 })"
+        <a
+          class="button"
+          (click)="
+            addShelf({
+              name: 'Spellbooks',
+              position: 1,
+              categoryGroupId: 1,
+            })
+          "
           >+</a
         >
       </li>

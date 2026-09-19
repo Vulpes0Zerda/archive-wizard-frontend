@@ -5,6 +5,7 @@ import { AuthActions } from '../services/state/auth/auth.actions';
 import { AuthState } from '../services/state/auth/auth.state';
 import { ApiCallStatus } from '../services/state/ApiCallStatus';
 import { HttpErrorResponse } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',

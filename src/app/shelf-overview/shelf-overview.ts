@@ -5,8 +5,8 @@ import { ApiCallStatus } from '../services/state/ApiCallStatus';
 import { AuthState } from '../services/state/auth/auth.state';
 import { ShelfActions } from '../services/state/shelf/shelf.actions';
 import { ShelfState } from '../services/state/shelf/shelf.state';
-import { ShelfStateModel } from '../services/state/shelf/shelf.state.model';
 import { Shelf } from '../services/model/Shelf';
+import { AuthActions } from '../services/state/auth/auth.actions';
 
 @Component({
   selector: 'app-shelf-overview',
@@ -39,6 +39,9 @@ export class ShelfOverview implements OnInit {
     if (this.apiStatus() === ApiCallStatus.SUCCESS) {
       this.store.dispatch(new ShelfActions.FetchAll());
     }
+  }
+  public logOut(): void {
+    this.store.dispatch(new AuthActions.Logout());
   }
 
   public setCurrentShelf(shelfId: number): void {

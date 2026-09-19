@@ -13,15 +13,19 @@ export class ShelfApi {
   public getShelfs(): Observable<HttpResponse<Shelf.Response.GetAll>> {
     return this.http.get<HttpResponse<Shelf.Response.GetAll>>(
       `${ApiService.BASE_URL}/shelf-manager/get-overview/`,
+      { withCredentials: true },
     );
   }
 
   public postShelf(
-    newShelf: Shelf.Request.PostSingle,
+    shelf: Shelf.Request.PostSingle,
   ): Observable<HttpResponse<Shelf.Response.PostSingle>> {
+    console.log(shelf);
+
     return this.http.post<HttpResponse<Shelf.Response.PostSingle>>(
-      `${ApiService.BASE_URL}/shelf-manager/create-shelf`,
-      newShelf,
+      `${ApiService.BASE_URL}/shelf-manager/create-shelf/`,
+      shelf,
+      { withCredentials: true },
     );
   }
 }
