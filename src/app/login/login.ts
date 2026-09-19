@@ -54,6 +54,5 @@ export class Login {
   onSubmit(event: Event) {
     event.preventDefault();
     this.store.dispatch(new AuthActions.Login(this.loginModel()));
-    this.loginModel.update((state) => ({ ...state, password: '' }));
   }
 }

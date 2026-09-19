@@ -1,10 +1,10 @@
 import { Component, effect, signal, Signal } from '@angular/core';
 import { form, FormField, pattern, required } from '@angular/forms/signals';
-import { ApiCallStatus } from '../../services/state/ApiCallStatus';
+import { ApiCallStatus } from '../services/state/ApiCallStatus';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngxs/store';
-import { AuthState } from '../../services/state/auth/auth.state';
-import { AuthActions } from '../../services/state/auth/auth.actions';
+import { AuthState } from '../services/state/auth/auth.state';
+import { AuthActions } from '../services/state/auth/auth.actions';
 
 @Component({
   selector: 'app-registration',
@@ -55,6 +55,5 @@ export class Registration {
   onSubmit(event: Event) {
     event.preventDefault();
     this.store.dispatch(new AuthActions.Register(this.registrationModel()));
-    this.registrationModel.update((state) => ({ ...state, password: '' }));
   }
 }
