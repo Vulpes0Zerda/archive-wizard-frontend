@@ -5,6 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngxs/store';
 import { AuthState } from '../services/state/auth/auth.state';
 import { AuthActions } from '../services/state/auth/auth.actions';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registration',
@@ -16,7 +17,10 @@ export class Registration {
   protected apiStatus: Signal<ApiCallStatus>;
   protected apiError: Signal<HttpErrorResponse | null>;
 
-  constructor(protected store: Store) {
+  constructor(
+    protected store: Store,
+    protected router: Router,
+  ) {
     this.apiStatus = store.selectSignal<ApiCallStatus>(AuthState.getStatus);
     this.apiError = store.selectSignal<HttpErrorResponse | null>(AuthState.getError);
     effect(() => {
@@ -26,6 +30,7 @@ export class Registration {
           break;
         case ApiCallStatus.SUCCESS:
           this.registrationModel.set(this.defaultRegistrationModel);
+          router.navigate(['']);
           break;
         case ApiCallStatus.PENDING:
           break;

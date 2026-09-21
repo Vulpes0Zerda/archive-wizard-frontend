@@ -5,7 +5,7 @@ import { AuthActions } from '../services/state/auth/auth.actions';
 import { AuthState } from '../services/state/auth/auth.state';
 import { ApiCallStatus } from '../services/state/ApiCallStatus';
 import { HttpErrorResponse } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +17,10 @@ export class Login {
   protected apiStatus: Signal<ApiCallStatus>;
   protected apiError: Signal<HttpErrorResponse | null>;
 
-  constructor(protected store: Store) {
+  constructor(
+    protected store: Store,
+    protected router: Router,
+  ) {
     this.apiStatus = store.selectSignal<ApiCallStatus>(AuthState.getStatus);
     this.apiError = store.selectSignal<HttpErrorResponse | null>(AuthState.getError);
     effect(() => {
@@ -27,6 +30,7 @@ export class Login {
           break;
         case ApiCallStatus.SUCCESS:
           this.loginModel.set(this.defaultLoginModel);
+          router.navigate(['']);
           break;
         case ApiCallStatus.PENDING:
           break;
