@@ -7,6 +7,8 @@ import { ApiCallStatus } from '../ApiCallStatus';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { Shelf } from '../../model/Shelf';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { append, patch, safePatch } from '@ngxs/store/operators';
+import { CategoryGroup } from '../../model/CategoryGroup';
 
 @State<ShelfStateModel>({
   name: 'shelf',
@@ -42,11 +44,19 @@ export class ShelfState {
     shelfContext.patchState({ status: ApiCallStatus.PENDING, error: null });
     return this.apiService.shelf.getShelfs().pipe(
       tap((response) => {
-        shelfContext.setState({
-          ...shelfContext.getState(),
-          status: ApiCallStatus.SUCCESS,
-          list: response.body,
-        });
+        if (response.body) {
+          shelfContext.setState({
+            ...shelfContext.getState(),
+            status: ApiCallStatus.SUCCESS,
+            list: [
+              ...response.body.map<Shelf.Model>((shelf): Shelf.Model => ({
+                ...shelf,
+                categoryGroupId: shelf.categoryGroup.id,
+              })),
+            ],
+            error: null,
+          });
+        }
       }),
       catchError((error: HttpErrorResponse) =>
         shelfContext.dispatch(new ShelfActions.Failure(error)),
@@ -62,7 +72,7 @@ export class ShelfState {
     shelfContext.setState({
       ...shelfContext.getState(),
       current: null,
-      list: null,
+      list: [],
       status: ApiCallStatus.FAILURE,
       error: action.error,
     });
@@ -86,8 +96,13 @@ export class ShelfState {
     shelfContext.patchState({ status: ApiCallStatus.PENDING, error: null });
     return this.apiService.shelf.postShelf(action.createShelfRequest).pipe(
       tap((response) => {
-        shelfContext.patchState({
-          list: response.body,
+        const copyShelfList: Array<Shelf.Model> = [...shelfContext.getState().list];
+        if (response.body) {
+          copyShelfList.push({ ...response.body, categoryGroupId: response.body.categoryGroup.id });
+        }
+        shelfContext.setState({
+          ...shelfContext.getState(),
+          list: [...copyShelfList],
           status: ApiCallStatus.SUCCESS,
           error: null,
         });

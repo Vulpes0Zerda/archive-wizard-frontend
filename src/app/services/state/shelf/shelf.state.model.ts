@@ -4,14 +4,14 @@ import { ApiCallStatus } from '../ApiCallStatus';
 
 export interface ShelfStateModel {
   current: Shelf.Model['id'] | null;
-  list: Array<Shelf.Model> | null;
+  list: Array<Shelf.Model>;
   error: HttpErrorResponse | null;
   status: ApiCallStatus;
 }
 
 export const defaultShelfState: ShelfStateModel = {
   current: null,
-  list: null,
+  list: [],
   error: null,
   status: ApiCallStatus.IDLE,
 };
