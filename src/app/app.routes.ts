@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { Login } from './login/login';
 import { Registration } from './registration/registration';
+import { CreateShelf } from './create-shelf/create-shelf';
 
 export const routes: Routes = [
   {
@@ -12,10 +13,14 @@ export const routes: Routes = [
     component: Registration,
   },
   {
-    path: 'shelf',
+    path: 'new-shelf',
+    component: CreateShelf,
+  },
+  {
+    path: 'shelf/:shelfId',
     children: [
       {
-        path: '*',
+        path: 'item/:itemId',
         children: [],
       },
     ],

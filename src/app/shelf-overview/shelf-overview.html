@@ -3,7 +3,7 @@
     @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
       <button type="button" class="logoutButton authButton" (click)="logOut()">Logout</button>
     } @else {
-      <button type="button" class="loginButton authButton" routerLink="/login">Login</button>
+      <button type="button" class="loginButton authButton" [routerLink]="['/login']">Login</button>
     }
 
     <h1>
@@ -15,21 +15,17 @@
     @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
       @for (shelf of shelfList(); track shelf.id) {
         <li class="button">
-          <a (click)="setCurrentShelf(shelf.id)">{{ shelf.name }}</a>
+          <a (click)="setCurrentShelf(shelf.id)">
+            {{ shelf.name }}
+          </a>
+        </li>
+      } @empty {
+        <li class="button">
+          <p>It looks empty in here. It's time you create your first Shelf!</p>
         </li>
       }
       <li>
-        <a
-          class="button"
-          (click)="
-            addShelf({
-              name: 'Spellbooks',
-              position: 1,
-              categoryGroupId: 1,
-            })
-          "
-          >+</a
-        >
+        <a class="rounded-s" [routerLink]="['/new-shelf']">+</a>
       </li>
     }
   </ul>

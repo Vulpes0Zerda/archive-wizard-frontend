@@ -1,0 +1,14 @@
+<h1>New Shelf</h1>
+<p>Create A shelf to store Items in.</p>
+<form>
+  <label name="shelf-name" for="shelf-name">Shelf Name:</label>
+  <input type="text" id="shelf-name" />
+  <label for="category-groups">Blueprint to use:</label>
+  <select name="category-groups" id="category-groups">
+    @for (categoryGroup of categoryGroups(); track categoryGroup.id) {
+      <option value="{{ categoryGroup.id }}">{{ categoryGroup.name }}</option>
+    }
+  </select>
+  <button type="reset">Abort</button>
+  <button type="submit">Create</button>
+</form>
