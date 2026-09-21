@@ -29,10 +29,11 @@ export class AuthInterceptorService implements HttpInterceptor {
           },
         })
       : req;
-    console.log(authRequest);
     return next.handle(authRequest).pipe(
+      // looks for Unautherized errors that don't come from /refresh (as to not create loops)
       catchError((error: HttpErrorResponse) => {
-        if (error.status === HttpStatusCode.Unauthorized) {
+        if (error.status === HttpStatusCode.Unauthorized && !req.url.includes('/refresh')) {
+          // when one is detected, it tries to refresh the token with the refresh cookie
           return this.store.dispatch(new AuthActions.Refresh()).pipe(
             switchMap(() => {
               const newAuthToken = this.store.selectSnapshot<string | null>(AuthState.getToken);

@@ -11,21 +11,27 @@ export class ShelfApi {
   constructor(private http: HttpClient) {}
 
   public getShelfs(): Observable<HttpResponse<Shelf.Response.GetAll>> {
-    return this.http.get<HttpResponse<Shelf.Response.GetAll>>(
-      `${ApiService.BASE_URL}/shelf-manager/get-overview/`,
-      { withCredentials: true },
+    return this.http.get<Shelf.Response.GetAll>(
+      `${ApiService.BASE_URL}/shelf-manager/get-overview`,
+      { withCredentials: true, observe: 'response' },
     );
   }
 
   public postShelf(
     shelf: Shelf.Request.PostSingle,
   ): Observable<HttpResponse<Shelf.Response.PostSingle>> {
-    console.log(shelf);
-
-    return this.http.post<HttpResponse<Shelf.Response.PostSingle>>(
-      `${ApiService.BASE_URL}/shelf-manager/create-shelf/`,
+    return this.http.post<Shelf.Response.PostSingle>(
+      `${ApiService.BASE_URL}/shelf-manager/create-shelf`,
       shelf,
-      { withCredentials: true },
+      { withCredentials: true, observe: 'response' },
     );
+  }
+
+  public deleteShelf(shelf: Shelf.Request.DeleteShelf): Observable<HttpResponse<null>> {
+    return this.http.delete<null>(`${ApiService.BASE_URL}/shelf-manager/delete-shelf`, {
+      withCredentials: true,
+      observe: 'response',
+      body: shelf,
+    });
   }
 }
