@@ -5,11 +5,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngxs/store';
 import { AuthState } from '../services/state/auth/auth.state';
 import { AuthActions } from '../services/state/auth/auth.actions';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-registration',
-  imports: [FormField],
+  imports: [FormField, RouterLink],
   templateUrl: './registration.html',
   styleUrl: './registration.scss',
 })
