@@ -1,14 +1,14 @@
 <h1>New Shelf</h1>
 <p>Create A shelf to store Items in.</p>
-<form>
+<form (submit)="onSubmit($event)">
   <label name="shelf-name" for="shelf-name">Shelf Name:</label>
-  <input type="text" id="shelf-name" />
+  <input type="text" id="shelf-name" [formField]="shelfForm.name" />
   <label for="category-groups">Blueprint to use:</label>
-  <select name="category-groups" id="category-groups">
+  <select id="category-groups" [formField]="shelfForm.categoryGroupId">
     @for (categoryGroup of categoryGroups(); track categoryGroup.id) {
-      <option value="{{ categoryGroup.id }}">{{ categoryGroup.name }}</option>
+      <option [value]="categoryGroup.id">{{ categoryGroup.name }}</option>
     }
   </select>
-  <button type="reset">Abort</button>
+  <button type="button" (click)="onCancel($event)">Abort</button>
   <button type="submit">Create</button>
 </form>

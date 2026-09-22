@@ -13,6 +13,6 @@ import { AuthActions } from './services/state/auth/auth.actions';
 export class App implements OnInit {
   constructor(protected store: Store) {}
   ngOnInit(): void {
-    this.store.dispatch(AuthActions.Refresh);
+    this.store.dispatch(new AuthActions.Refresh());
   }
 }

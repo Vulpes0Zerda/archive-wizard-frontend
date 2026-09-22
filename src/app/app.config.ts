@@ -11,17 +11,14 @@ import { withNgxsWebSocketPlugin } from '@ngxs/websocket-plugin';
 import { provideStore } from '@ngxs/store';
 import { AuthState } from './services/state/auth/auth.state';
 import { ShelfState } from './services/state/shelf/shelf.state';
-import {
-  HTTP_INTERCEPTORS,
-  provideHttpClient,
-  withInterceptors,
-  withInterceptorsFromDi,
-} from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AuthInterceptorService } from './services/api/auth.interceptor.service';
 import { CategoryGroupState } from './services/state/categoryGroup/category.group.state';
+import { NgSelectOption } from '@angular/forms';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    NgSelectOption,
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideStore(
