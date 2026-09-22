@@ -94,14 +94,18 @@ export class ShelfState {
     action: ShelfActions.CreateShelf,
   ): Observable<HttpResponse<Shelf.Response.PostSingle> | void> {
     shelfContext.patchState({ status: ApiCallStatus.PENDING, error: null });
+    console.log(`Trying to dispatch payload: ${action.createShelfRequest}`);
     return this.apiService.shelf.postShelf(action.createShelfRequest).pipe(
       tap((response) => {
         const copyShelfList: Array<Shelf.Model> = [...shelfContext.getState().list];
+
         if (response.body) {
           copyShelfList.push({ ...response.body, categoryGroupId: response.body.categoryGroup.id });
         }
+
         shelfContext.setState({
           ...shelfContext.getState(),
+          current: response.body?.id ?? null,
           list: [...copyShelfList],
           status: ApiCallStatus.SUCCESS,
           error: null,
