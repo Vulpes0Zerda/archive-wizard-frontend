@@ -1,31 +1,49 @@
-<nav>
-  <div class="grid grid-cols-2 grid-rows-none">
-    @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
-      <button type="button" class="logoutButton authButton" (click)="logOut()">Logout</button>
-    } @else {
-      <button type="button" class="loginButton authButton" [routerLink]="['/login']">Login</button>
-    }
-
+@if (pendingShelfDeleteName()) {
+  <div class="bg-gray-800 rounded-s block p-8">
     <h1>
-      <i>Archive<br />Wizzard</i>
+      Are you sure you want to delete
+      {{ pendingShelfDeleteName() }}?
     </h1>
+    <p>This action is not reversable and will result in the loss of all the items in this shelf.</p>
+    <form (submit)="deleteShelf($event)" (reset)="deleteShelfCancel($event)">
+      <label for="delete-confirm-field">To confirm please enter the Name of your shelf:</label>
+      <input
+        id="delete-confirm-field"
+        type="text"
+        [formField]="deleteShelfForm.name"
+        [placeholder]="pendingShelfDeleteName()"
+      />
+      <button type="reset">Cancel</button>
+      <button type="submit">Ok</button>
+    </form>
   </div>
+}
+<div class="grid grid-cols-2 grid-rows-none">
+  @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
+    <button type="button" class="logoutButton authButton" (click)="logOut()">Logout</button>
+  } @else {
+    <button type="button" class="loginButton authButton" [routerLink]="['/login']">Login</button>
+  }
 
+  <h1>
+    <i>Archive<br />Wizzard</i>
+  </h1>
+</div>
+<nav>
   <ul>
     @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
       @for (shelf of shelfList(); track shelf.id) {
         <li class="button">
-          <a (click)="setCurrentShelf(shelf.id)">
+          <a class="block rounded-s" (click)="setCurrentShelf(shelf.id)">
             {{ shelf.name }}
           </a>
+          <button class="rounded-s" (click)="showDeleteConfirmPopUp(shelf.id)">-</button>
         </li>
       } @empty {
-        <li class="button">
-          <p>It looks empty in here. It's time you create your first Shelf!</p>
-        </li>
+        <li class="button">It looks empty in here. It's time you create your first Shelf!</li>
       }
       <li>
-        <a class="rounded-s" [routerLink]="['/new-shelf']">+</a>
+        <a class="block" [routerLink]="['/new-shelf']">+</a>
       </li>
     } @else {
       <li>
