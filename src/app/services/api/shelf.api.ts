@@ -27,11 +27,11 @@ export class ShelfApi {
     );
   }
 
-  public deleteShelf(shelfId: Shelf.Request.DeleteShelf): Observable<HttpResponse<null>> {
-    return this.http.delete<null>(`${ApiService.BASE_URL}/shelf-manager/delete-shelf`, {
+  public deleteShelf(shelfId: number): Observable<HttpResponse<number>> {
+    return this.http.delete<number>(`${ApiService.BASE_URL}/shelf-manager/delete-shelf`, {
       withCredentials: true,
       observe: 'response',
-      params: shelfId,
+      params: { shelfId: shelfId },
     });
   }
 }

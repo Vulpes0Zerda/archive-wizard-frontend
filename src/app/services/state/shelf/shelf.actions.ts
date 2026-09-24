@@ -20,6 +20,11 @@ export namespace ShelfActions {
 
   export class SetCurrent {
     static readonly type = `${ACTION_SCOPE} Set Current Shelf`;
-    constructor(public readonly shelfId: Shelf.Model['id']) {}
+    constructor(public readonly shelfId: number) {}
+  }
+
+  export class DeleteShelf {
+    static readonly type = `${ACTION_SCOPE} Delete A Shelf`;
+    constructor(public readonly shelfId: number) {}
   }
 }

@@ -24,7 +24,7 @@ export class ShelfState {
 
   @Selector()
   public static getCurrentShelf(shelfState: ShelfStateModel) {
-    return shelfState.current;
+    return shelfState.list.find((shelf) => shelf.id === shelfState.current);
   }
 
   @Selector()
@@ -107,6 +107,36 @@ export class ShelfState {
           ...shelfContext.getState(),
           current: response.body?.id ?? null,
           list: [...copyShelfList],
+          status: ApiCallStatus.SUCCESS,
+          error: null,
+        });
+      }),
+      catchError((error: HttpErrorResponse) =>
+        shelfContext.dispatch(new ShelfActions.Failure(error)),
+      ),
+    );
+  }
+
+  @Action(ShelfActions.DeleteShelf)
+  public deleteShelf(
+    shelfContext: StateContext<ShelfStateModel>,
+    action: ShelfActions.DeleteShelf,
+  ): Observable<HttpResponse<number> | void> {
+    shelfContext.patchState({ status: ApiCallStatus.PENDING, error: null });
+    return this.apiService.shelf.deleteShelf(action.shelfId).pipe(
+      tap((response) => {
+        const deletedShelfId = response.body;
+        const updatedShelfList = shelfContext
+          .getState()
+          .list.filter((shelf) => shelf.id !== deletedShelfId);
+
+        shelfContext.setState({
+          ...shelfContext.getState(),
+          list: updatedShelfList,
+          current:
+            shelfContext.getState().current === deletedShelfId
+              ? null
+              : shelfContext.getState().current,
           status: ApiCallStatus.SUCCESS,
           error: null,
         });
