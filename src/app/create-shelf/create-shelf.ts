@@ -10,6 +10,7 @@ import { CategoryGroupActions } from '../services/state/categoryGroup/category.g
 import { form, FormField, required } from '@angular/forms/signals';
 import { ShelfActions } from '../services/state/shelf/shelf.actions';
 import { Router } from '@angular/router';
+import { Shelf } from '../services/model/Shelf';
 
 @Component({
   selector: 'app-create-shelf',
@@ -21,7 +22,7 @@ export class CreateShelf implements OnInit {
   protected apiStatus: Signal<ApiCallStatus>;
   protected shelfStatus: Signal<ApiCallStatus>;
   protected categoryGroups: Signal<Array<CategoryGroup.Model>>;
-  protected currentShelf: Signal<number | null>;
+  protected currentShelf: Signal<Shelf.Model | undefined>;
 
   constructor(
     protected readonly store: Store,
@@ -32,7 +33,7 @@ export class CreateShelf implements OnInit {
     this.categoryGroups = store.selectSignal<Array<CategoryGroup.Model>>(
       CategoryGroupState.getAllCategoryGroups,
     );
-    this.currentShelf = store.selectSignal<number | null>(ShelfState.getCurrentShelf);
+    this.currentShelf = store.selectSignal<Shelf.Model | undefined>(ShelfState.getCurrentShelf);
   }
 
   ngOnInit(): void {
@@ -69,7 +70,7 @@ export class CreateShelf implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.router.navigate(['/shelf', this.currentShelf()]);
+          this.router.navigate(['/shelf', this.currentShelf()?.id]);
         },
       });
   }
