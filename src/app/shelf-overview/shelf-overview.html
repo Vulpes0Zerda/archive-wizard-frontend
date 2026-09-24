@@ -18,35 +18,35 @@
     </form>
   </div>
 }
-<div class="grid grid-cols-2 grid-rows-none">
+<div class="grid grid-cols-[min-content_auto] grid-rows-none content-center w-full align-items-center">
   @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
-    <button type="button" class="logoutButton authButton" (click)="logOut()">Logout</button>
+    <button type="button" class="logoutButton authButton size-min" (click)="logOut()"><app-logout-svg/></button>
   } @else {
-    <button type="button" class="loginButton authButton" [routerLink]="['/login']">Login</button>
+    <button type="button" class="loginButton authButton size-min" [routerLink]="['/login']"><app-login-svg/></button>
   }
 
-  <h1>
+  <h1 class="w-full text-xl text-center align-vertical">
     <i>Archive<br />Wizzard</i>
   </h1>
 </div>
 <nav>
-  <ul>
+  <ul class="h-full">
     @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
       @for (shelf of shelfList(); track shelf.id) {
-        <li class="button">
-          <a class="block rounded-s" (click)="setCurrentShelf(shelf.id)">
+        <li class="shelf-container grid grid-col-[auto_min-content] grid-rows-none grid-flow-col items-center  content-stretch justify-stretch justify-items-center rounded-s">
+          <button class="h-[5rem] w-full" (click)="setCurrentShelf(shelf.id)">
             {{ shelf.name }}
-          </a>
-          <button class="rounded-s" (click)="showDeleteConfirmPopUp(shelf.id)">-</button>
+          </button>
+          <button class="rounded-s size-[2rem]" (click)="showDeleteConfirmPopUp(shelf.id)">-</button>
         </li>
       } @empty {
         <li class="button">It looks empty in here. It's time you create your first Shelf!</li>
       }
-      <li>
-        <a class="block" [routerLink]="['/new-shelf']">+</a>
+      <li class="grid justify-stretch justify-item-stretch">
+        <button class="w-full " [routerLink]="['/new-shelf']">+</button>
       </li>
     } @else {
-      <li>
+      <li class="block w-full h-full text-center align-center">
         <a [routerLink]="['/login']">Please login to start creating shelfs.</a>
       </li>
     }

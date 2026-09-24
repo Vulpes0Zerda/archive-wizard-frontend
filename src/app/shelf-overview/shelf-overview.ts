@@ -9,12 +9,15 @@ import { Shelf } from '../services/model/Shelf';
 import { AuthActions } from '../services/state/auth/auth.actions';
 import { CategoryGroupActions } from '../services/state/categoryGroup/category.group.actions';
 import { form, FormField } from '@angular/forms/signals';
+import { LogoutSvg } from '../icons/logout-svg/logout-svg';
+import { LoginSvg } from '../icons/login-svg/login-svg';
 
 @Component({
   selector: 'app-shelf-overview',
-  imports: [RouterLink, FormField],
+  imports: [RouterLink, FormField, LogoutSvg, LoginSvg],
   templateUrl: './shelf-overview.html',
   styleUrl: './shelf-overview.scss',
+  host: {class: "sidebar"}
 })
 export class ShelfOverview implements OnInit {
   protected readonly API_STATUS_TYPE: typeof ApiCallStatus = ApiCallStatus;
