@@ -1,12 +1,15 @@
-<form (submit)="onSubmit($event)">
-  <label for="emailFormField">E-Mail:</label>
-  <input type="email" [formField]="loginForm.email" id="emailFormField" />
+<div class="grid grid-cols-1 grid-rows-[1fr_3fr_1fr] justify-center justify-items-center content-around items-center size-full">
+  <h1 class="text-2xl">Login</h1>
+  <form (submit)="onSubmit($event)" class="background-dark-secondary grid grid-cols-[1fr_2fr] grid-rows-[3fr] gap-4 p-10 w-2xl max-w-[90%] min-w-min min-h-min justify-center justify-items-center content-around items-center rounded-md">
+    <label for="emailFormField" class="justify-self-end">E-Mail:</label>
+    <input type="email" [formField]="loginForm.email" id="emailFormField" class="background-light-primary justify-self-start p-1 w-full rounded-xs overflow-visible"/>
 
-  <label for="passwordFormField">Password:</label>
-  <input type="password" [formField]="loginForm.password" id="passwordFormField" />
+    <label for="passwordFormField" class="justify-self-end">Password:</label>
+    <input type="password" [formField]="loginForm.password" id="passwordFormField" class="background-light-primary justify-self-start p-1 w-full rounded-xs overflow-visible"/>
 
-  <button type="submit">Login</button>
+    <button type="submit" class="background-light-primary col-[-2_/_-1] box-content rounded-xs min-w-min min-h-min w-[7rem] h-[2rem] justify-self-start px-3 py-1">Login</button>
 
-</form>
+  </form>
 
-<a routerLink="/registration">Not registered yet? Create an account!</a>
+  <a routerLink="/registration" class="p-10">Not registered yet? Create an account!</a>
+</div>

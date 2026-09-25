@@ -1,24 +1,26 @@
 @if (pendingShelfDeleteName()) {
-  <div class="bg-gray-800 rounded-s block p-8">
-    <h1>
-      Are you sure you want to delete
-      {{ pendingShelfDeleteName() }}?
-    </h1>
-    <p>This action is not reversable and will result in the loss of all the items in this shelf.</p>
-    <form (submit)="deleteShelf($event)" (reset)="deleteShelfCancel($event)">
-      <label for="delete-confirm-field">To confirm please enter the Name of your shelf:</label>
-      <input
-        id="delete-confirm-field"
-        type="text"
-        [formField]="deleteShelfForm.name"
-        [placeholder]="pendingShelfDeleteName()"
-      />
-      <button type="reset">Cancel</button>
-      <button type="submit">Ok</button>
-    </form>
-  </div>
+  <div class="bg-gray-800/50 flex absolute top-0 left-0 justify-items-center items-center justify-center justify-content-center content-center w-screen h-screen">
+    <div class="background-dark-primary rounded-xs block p-8">
+      <h1>
+        Are you sure you want to delete
+        {{ pendingShelfDeleteName() }}?
+      </h1>
+      <p>This action is not reversable and will result in the loss of all the items in this shelf.</p>
+      <form (submit)="deleteShelf($event)" (reset)="deleteShelfCancel($event)">
+        <label for="delete-confirm-field">To confirm please enter the Name of your shelf:</label>
+        <input
+          id="delete-confirm-field"
+          type="text"
+          [formField]="deleteShelfForm.name"
+          [placeholder]="pendingShelfDeleteName()"
+        />
+        <button type="reset">Cancel</button>
+        <button type="submit">Ok</button>
+      </form>
+    </div>
+</div>
 }
-<div class="grid grid-cols-[min-content_auto] grid-rows-none content-center w-full align-items-center">
+<div class="grid grid-cols-[min-content_auto] grid-rows-none content-center w-full align-items-center items-center">
   @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
     <button type="button" class="logoutButton authButton size-min" (click)="logOut()"><app-logout-svg/></button>
   } @else {
@@ -30,20 +32,20 @@
   </h1>
 </div>
 <nav>
-  <ul class="h-full">
+  <ul class="h-full gap-3 grid grid-col-[100%] grid-rows-[repeat(auto-fit,_5rem)] justify-stretch justify-items-stretch items-stretch">
     @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
       @for (shelf of shelfList(); track shelf.id) {
-        <li class="shelf-container grid grid-col-[auto_min-content] grid-rows-none grid-flow-col items-center  content-stretch justify-stretch justify-items-center rounded-s">
-          <button class="h-[5rem] w-full" (click)="setCurrentShelf(shelf.id)">
+        <li class="shelf-container grid grid-col-[auto_min-content] grid-rows-none grid-flow-col items-center content-stretch justify-stretch justify-items-center rounded-xs px-6 py-2">
+          <button class="w-full text-left justify-self-start" (click)="setCurrentShelf(shelf.id)">
             {{ shelf.name }}
           </button>
-          <button class="rounded-s size-[2rem]" (click)="showDeleteConfirmPopUp(shelf.id)">-</button>
+          <button class="rounded-xs size-[2rem] justify-self-end" (click)="showDeleteConfirmPopUp(shelf.id)">-</button>
         </li>
       } @empty {
         <li class="button">It looks empty in here. It's time you create your first Shelf!</li>
       }
-      <li class="grid justify-stretch justify-item-stretch">
-        <button class="w-full " [routerLink]="['/new-shelf']">+</button>
+      <li class="shelf-container grid justify-stretch justify-item-stretch rounded-xs">
+        <button class="" [routerLink]="['/new-shelf']">+</button>
       </li>
     } @else {
       <li class="block w-full h-full text-center align-center">
