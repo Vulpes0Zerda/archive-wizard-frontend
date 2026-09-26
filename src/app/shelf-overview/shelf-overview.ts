@@ -42,9 +42,6 @@ export class ShelfOverview implements OnInit {
         this.store.dispatch(new ShelfActions.FetchAll());
         this.store.dispatch(new CategoryGroupActions.FetchAll());
       }
-      if (this.currentShelf()) {
-        this.router.navigate(['/shelf', this.currentShelf()?.id]);
-      }
     });
   }
 
@@ -68,6 +65,7 @@ export class ShelfOverview implements OnInit {
       error: () => {},
     });
   }
+
   public showDeleteConfirmPopUp(shelfId: number): void {
     this.deletePopUpPayload.set(shelfId);
   }

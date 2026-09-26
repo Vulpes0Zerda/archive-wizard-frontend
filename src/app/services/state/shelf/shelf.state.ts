@@ -9,6 +9,8 @@ import { Shelf } from '../../model/Shelf';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { append, patch, safePatch } from '@ngxs/store/operators';
 import { CategoryGroup } from '../../model/CategoryGroup';
+import { ItemActions } from '../item/item.actions';
+import { Item } from '../../model/Item';
 
 @State<ShelfStateModel>({
   name: 'shelf',
@@ -71,8 +73,6 @@ export class ShelfState {
   ): Observable<never> {
     shelfContext.setState({
       ...shelfContext.getState(),
-      current: null,
-      list: [],
       status: ApiCallStatus.FAILURE,
       error: action.error,
     });
@@ -83,9 +83,13 @@ export class ShelfState {
   public setCurrent(
     shelfContext: StateContext<ShelfStateModel>,
     action: ShelfActions.SetCurrent,
-  ): void {
-    shelfContext.patchState({ current: action.shelfId });
-    //TODO: Dispatch action to fetch all items in the shelf
+  ): Observable<HttpResponse<Item.Response.GetItems> | void> {
+    if (shelfContext.getState().list.findIndex((shelf) => shelf.id === action.shelfId) !== -1) {
+      shelfContext.patchState({ current: action.shelfId });
+      return shelfContext.dispatch(new ItemActions.FetchAll(shelfContext.getState().current ?? 0));
+    } else {
+      return new Observable<void>();
+    }
   }
 
   @Action(ShelfActions.CreateShelf)
@@ -94,7 +98,6 @@ export class ShelfState {
     action: ShelfActions.CreateShelf,
   ): Observable<HttpResponse<Shelf.Response.PostSingle> | void> {
     shelfContext.patchState({ status: ApiCallStatus.PENDING, error: null });
-    console.log(`Trying to dispatch payload: ${action.createShelfRequest}`);
     return this.apiService.shelf.postShelf(action.createShelfRequest).pipe(
       tap((response) => {
         const copyShelfList: Array<Shelf.Model> = [...shelfContext.getState().list];

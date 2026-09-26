@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Login } from './login/login';
 import { Registration } from './registration/registration';
 import { CreateShelf } from './create-shelf/create-shelf';
+import { ShelfView } from './shelf/shelf-view';
 
 export const routes: Routes = [
   {
@@ -18,6 +19,7 @@ export const routes: Routes = [
   },
   {
     path: 'shelf/:shelfId',
+    component: ShelfView,
     children: [
       {
         path: 'item/:itemId',

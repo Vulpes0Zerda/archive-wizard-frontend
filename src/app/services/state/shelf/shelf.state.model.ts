@@ -3,7 +3,7 @@ import { Shelf } from '../../model/Shelf';
 import { ApiCallStatus } from '../ApiCallStatus';
 
 export interface ShelfStateModel {
-  current: Shelf.Model['id'] | null;
+  current: number | null;
   list: Array<Shelf.Model>;
   error: HttpErrorResponse | null;
   status: ApiCallStatus;

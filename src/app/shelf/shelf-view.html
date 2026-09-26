@@ -1,0 +1,13 @@
+<h1>{{ currentShelf()?.name }}</h1>
+<div class="shelf">
+  @for (item of currentShelfItems(); track item.id) {
+    <section [id]="`${item.name}-${item.id}`" class="item">
+      @if (item.picture !== '\x') {
+        <img [src]="item.picture" [alt]="`Image of Item ${item.name}`" />
+      } @else {
+        <img />
+      }
+      <h2>{{ item.name }}</h2>
+    </section>
+  }
+</div>

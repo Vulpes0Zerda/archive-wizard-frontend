@@ -1,8 +1,11 @@
-@use 'tailwindcss';
-
 .shelf {
   flex: auto;
   flex-wrap: wrap;
   flex-direction: row;
   flex-basis: var(--container-2xs);
+}
+
+.item {
+  width: var(--container-sm);
+  height: var(--container-sm);
 }
