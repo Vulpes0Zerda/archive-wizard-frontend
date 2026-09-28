@@ -1,0 +1,60 @@
+<div class="grid grid-cols-[5fr_3fr] grid-rows-none max-h-full h-full overflow-scroll">
+  <section>
+    <h1 class="text-xl text-center px-2 py-5">
+      {{ currentShelf()?.name }}
+    </h1>
+    @if (deleteError(); as error) {
+      <p class="px-4 text-sm text-red-700" role="alert">{{ error }}</p>
+    }
+    <div class="shelf flex flex-wrap basis-sm content-stretch items-stretch align-center">
+      @for (item of currentShelfItems(); track item.id) {
+        <div class="relative min-h-min min-w-min h-full p-4">
+          <button
+            type="button"
+            class="min-h-min min-w-min h-full"
+            (click)="selectItem(item.id)"
+          >
+            <figure
+              [id]="`${item.name}-${item.id}`"
+              class="item add-item grid grid-cols-[1fr] grid-rows-[auto_1fr] min-w-min min-h-min w-[5rem] justify-center justify-items-center h-full"
+            >
+              @if (item.picture !== '') {
+                <img
+                  [src]="item.picture"
+                  [alt]="`Image of Item ${item.name}`"
+                  class="py-[20%] aspect-square overflow-visible"
+                />
+              } @else {
+                <img class="p-[10%] aspect-square overflow-visible" src="insert-picture-icon.png" />
+              }
+              <h2 class="text-center self-end">{{ item.name }}</h2>
+            </figure>
+          </button>
+          <button
+            type="button"
+            [attr.aria-label]="'Delete item ' + item.name"
+            title="Delete item"
+            class="absolute right-1 top-1 size-7 rounded-xs p-1 text-red-700 hover:bg-red-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
+            (click)="deleteItem(item.id)"
+          >
+            <app-close-svg />
+          </button>
+        </div>
+      }
+      <button type="button" class="min-h-min min-w-min" (click)="showAddItem()">
+        <figure
+          [id]="`new-item`"
+          class="item add-item grid grid-cols-[1fr] grid-rows-[2fr_1fr] min-w-min min-h-min w-[5rem]"
+        >
+          <app-add-item-svg />
+          <figcaption class="text-center">Add Item</figcaption>
+        </figure>
+      </button>
+    </div>
+  </section>
+  @if (sidebarMode() === 'item') {
+    <app-item-view (closed)="closeSidebar()" />
+  } @else if (sidebarMode() === 'new-item') {
+    <app-add-item (closed)="closeSidebar()" />
+  }
+</div>

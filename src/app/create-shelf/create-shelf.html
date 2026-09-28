@@ -1,0 +1,16 @@
+<div class="grid grid-cols-1 grid-rows-[1fr_3fr] justify-center justify-items-center content-around items-center size-full">
+  <h1 class="text-2xl">New Shelf</h1>
+  <form (submit)="onSubmit($event)" class="background-dark-secondary grid grid-cols-2 grid-rows-[1fr_3fr_3fr_4fr] gap-4 p-10 justify-center justify-items-center content-around items-center rounded-md">
+    <p class="col-span-full"><i>Create a shelf to store items in.</i></p>
+    <label name="shelf-name" for="shelf-name" class="justify-self-end">Shelf Name:</label>
+    <input type="text" id="shelf-name" class="background-light-primary justify-self-start p-1 w-full rounded-xs overflow-visible" [formField]="shelfForm.name" />
+    <label for="category-groups" class="justify-self-end">Choose a Template:</label>
+    <select id="category-groups" class="background-light-primary justify-self-start p-1 w-full rounded-xs overflow-visible" [formField]="shelfForm.categoryGroupId">
+      @for (categoryGroup of categoryGroups(); track categoryGroup.id) {
+        <option [value]="categoryGroup.id">{{ categoryGroup.name }}</option>
+      }
+    </select>
+    <button type="button" class="background-light-primary box-content rounded-xs min-w-min min-h-min w-[7rem] h-[2rem] px-3 py-1" (click)="onCancel($event)">Cancel</button>
+    <button type="submit" class="success-primary box-content rounded-xs min-w-min min-h-min w-[7rem] h-[2rem] px-3 py-1" >Create</button>
+  </form>
+</div>

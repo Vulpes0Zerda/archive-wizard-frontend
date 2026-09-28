@@ -1,1 +1,31 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'tailwindcss';
+
+.background-dark-primary {
+  background: rgb(47, 30, 24);
+  color: rgb(255 218 188);
+}
+
+.background-dark-secondary {
+  color: rgb(255 218 188);
+  background: rgb(59, 37, 26);
+}
+
+.background-light-primary {
+  background: rgb(255 218 188);
+  color: rgb(47, 30, 24);
+}
+
+.success-primary {
+  background: rgb(182, 255, 130);
+  color: rgb(47, 30, 24);
+}
+
+.auth-svg {
+  fill: rgb(255 218 188);
+  stroke: rgb(255 218 188);
+}
+
+.shelf-svg {
+  fill: rgb(255 218 188);
+  stroke: rgb(255 218 188);
+}

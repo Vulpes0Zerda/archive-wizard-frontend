@@ -1,0 +1,31 @@
+<div class="grid grid-cols-1 grid-rows-[1fr_3fr_auto] overflow-scroll h-full">
+  <button
+    type="button"
+    (click)="closed.emit()"
+    class="absolute right-0 top-0 size-[3rem]"
+    aria-label="Close item details"
+  >
+    <app-close-svg />
+  </button>
+  <h1 class="text-xl text-center px-2 py-5">{{ currentItem()?.name }}</h1>
+  @if (currentItem()?.picture !== '') {
+    <img [src]="currentItem()?.picture" [alt]="`Image of Item ${currentItem()?.name}`" />
+  } @else {
+    <img class="p-3 aspect-square overflow-visible w-[8rem]" src="insert-picture-icon.png" />
+  }
+  <form
+    class="grid grid-cols-1 grid-rows-(auto-fill,_10rem) overflow-y-scroll"
+    (submit)="saveOnSubmit($event)"
+  >
+    @for (key of allKeysInItem(); track key.id) {
+      <label [for]="'category-key-' + key.id">{{ key.key }}</label>
+      <input
+        type="text"
+        [id]="'category-key-' + key.id"
+        class="background-light-primary w-full rounded-xs p-1 m-2"
+        [value]="getValue(key.id)"
+        (input)="updateValue(key.id, $event)"
+      />
+    }
+  </form>
+</div>

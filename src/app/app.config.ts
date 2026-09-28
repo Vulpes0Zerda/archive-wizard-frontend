@@ -2,7 +2,44 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
+import { withNgxsReduxDevtoolsPlugin } from '@ngxs/devtools-plugin';
+import { withNgxsFormPlugin } from '@ngxs/form-plugin';
+import { withNgxsLoggerPlugin } from '@ngxs/logger-plugin';
+import { withNgxsRouterPlugin } from '@ngxs/router-plugin';
+import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
+import { withNgxsWebSocketPlugin } from '@ngxs/websocket-plugin';
+import { provideStore } from '@ngxs/store';
+import { AuthState } from './services/state/auth/auth.state';
+import { ShelfState } from './services/state/shelf/shelf.state';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { AuthInterceptorService } from './services/api/auth.interceptor.service';
+import { CategoryGroupState } from './services/state/categoryGroup/category.group.state';
+import { NgSelectOption } from '@angular/forms';
+import { ItemState } from './services/state/item/item.state';
+import { CategoryKeyState } from './services/state/categoryKey/category-key.state';
+import { CategoryValueState } from './services/state/categoryValue/category-value.state';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideBrowserGlobalErrorListeners(), provideRouter(routes)],
+  providers: [
+    NgSelectOption,
+    provideBrowserGlobalErrorListeners(),
+    provideRouter(routes),
+    provideStore(
+      [
+        AuthState,
+        ShelfState,
+        CategoryGroupState,
+        ItemState,
+        CategoryKeyState,
+        CategoryValueState,
+      ],
+      withNgxsReduxDevtoolsPlugin(),
+      withNgxsFormPlugin(),
+      withNgxsLoggerPlugin(),
+      withNgxsRouterPlugin(),
+      withNgxsWebSocketPlugin(),
+    ),
+    provideHttpClient(withInterceptorsFromDi()),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true },
+  ],
 };
