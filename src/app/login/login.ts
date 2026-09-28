@@ -30,7 +30,7 @@ export class Login {
           break;
         case ApiCallStatus.SUCCESS:
           this.loginModel.set(this.defaultLoginModel);
-          router.navigate(['']);
+          router.navigate(['/']);
           break;
         case ApiCallStatus.PENDING:
           break;

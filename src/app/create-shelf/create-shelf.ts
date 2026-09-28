@@ -1,7 +1,7 @@
 import { Component, effect, OnInit, signal, Signal } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { ApiCallStatus } from '../services/state/ApiCallStatus';
-import { CategoryGroupStateModel } from '../services/state/categoryGroup/category.group.state.model';
+import { CategoryGroupStateModel } from '../services/state/categoryGroup/category-group.state.model';
 import { CategoryGroupState } from '../services/state/categoryGroup/category.group.state';
 import { CategoryGroup } from '../services/model/CategoryGroup';
 import { AuthState } from '../services/state/auth/auth.state';
@@ -70,7 +70,10 @@ export class CreateShelf implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.router.navigate(['/shelf', this.currentShelf()?.id]);
+          const shelfId = this.currentShelf()?.id;
+          if (shelfId !== undefined) {
+            this.router.navigate(['/shelf', shelfId]);
+          }
         },
       });
   }
@@ -78,6 +81,6 @@ export class CreateShelf implements OnInit {
   protected onCancel(event: Event) {
     event.preventDefault();
     this.createShelfModel.set(this.defaultCreateShelfModel);
-    this.router.navigate(['']);
+    this.router.navigate(['/']);
   }
 }
