@@ -4,10 +4,17 @@ import { defaultItemState, ItemStateModel } from './item.state.model';
 import { ApiService } from '../../api/api.service';
 import { ItemActions } from './item.actions';
 import { ApiCallStatus } from '../ApiCallStatus';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import {
+  catchError,
+  concatMap,
+  map,
+  Observable,
+  of,
+  tap,
+  throwError,
+} from 'rxjs';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Item } from '../../model/Item';
-import { CategoryValue } from '../../model/CategoryValue';
 import { ShelfState } from '../shelf/shelf.state';
 
 @State<ItemStateModel>({
@@ -49,30 +56,20 @@ export class ItemState {
     itemContext.patchState({ status: ApiCallStatus.PENDING, error: null });
 
     return this.apiService.item.getItems(action.shelfId).pipe(
+      concatMap((response) => {
+        const replacedItemIds = itemContext
+          .getState()
+          .list.filter((item) => item.shelfId === action.shelfId)
+          .map((item) => item.id);
+
+        return itemContext
+          .dispatch(
+            this.toFillStateAction(response.body ?? [], action.shelfId, replacedItemIds),
+          )
+          .pipe(map(() => response));
+      }),
       tap((response) => {
-        if (response.body) {
-          let listToSpread: Item.Response.GetItems = [...response.body];
-          itemContext.setState({
-            ...itemContext.getState(),
-            status: ApiCallStatus.SUCCESS,
-            error: null,
-            list: [
-              ...itemContext.getState().list.map((item) => {
-                const indexOfUpdatedItem = listToSpread.findIndex(
-                  (responseItem) => responseItem.id === item.id,
-                );
-                if (indexOfUpdatedItem !== -1) {
-                  const updatedItem: Item.Response.PostSingle = listToSpread[indexOfUpdatedItem];
-                  listToSpread.splice(indexOfUpdatedItem, 1);
-                  return this.responseToStateMap(updatedItem);
-                } else {
-                  return item;
-                }
-              }),
-              ...listToSpread.map((item) => this.responseToStateMap(item)),
-            ],
-          });
-        }
+        itemContext.patchState({ status: ApiCallStatus.SUCCESS, error: null });
       }),
       catchError((error: HttpErrorResponse) =>
         itemContext.dispatch(new ItemActions.Failure(error)),
@@ -97,22 +94,27 @@ export class ItemState {
   public setCurrent(
     itemContext: StateContext<ItemStateModel>,
     action: ItemActions.SetCurrent,
-  ): void {
+  ): Observable<void> {
     if (itemContext.getState().list.findIndex((item) => item.id === action.itemId) !== -1) {
       itemContext.patchState({ current: action.itemId });
-    } else {
-      itemContext
-        .dispatch(
-          new ItemActions.FetchAll(this.store.selectSnapshot(ShelfState.getCurrentShelf)?.id ?? 0),
-        )
-        .subscribe({
-          next: () => {
-            if (itemContext.getState().list.findIndex((item) => item.id === action.itemId) !== -1) {
-              itemContext.patchState({ current: action.itemId });
-            }
-          },
-        });
+      return of(undefined);
     }
+
+    const shelfId = this.store.selectSnapshot(ShelfState.getCurrentShelf)?.id;
+    if (shelfId === undefined) {
+      return throwError(() => new Error('Cannot fetch items without a current shelf.'));
+    }
+
+    return itemContext.dispatch(new ItemActions.FetchAll(shelfId)).pipe(
+      concatMap(() => {
+        if (itemContext.getState().list.some((item) => item.id === action.itemId)) {
+          itemContext.patchState({ current: action.itemId });
+          return of(undefined);
+        }
+
+        return throwError(() => new Error(`Could not find the item id of ${action.itemId}.`));
+      }),
+    );
   }
 
   @Action(ItemActions.CreateItem)
@@ -122,19 +124,29 @@ export class ItemState {
   ): Observable<HttpResponse<Item.Response.PostSingle> | void> {
     itemContext.patchState({ status: ApiCallStatus.PENDING, error: null });
     return this.apiService.item.postItem(action.createItemRequest).pipe(
-      tap((response) => {
-        const copyItemList: Array<Item.Model> = [...itemContext.getState().list];
-        if (response.body) {
-          copyItemList.push(this.responseToStateMap(response.body));
+      concatMap((response) => {
+        if (!response.body) {
+          return throwError(
+            () =>
+              new HttpErrorResponse({
+                error: 'Did not get the created item back.',
+                status: 502,
+                statusText: 'Missing response body',
+              }),
+          );
         }
 
-        itemContext.setState({
-          ...itemContext.getState(),
-          current: response.body?.id ?? null,
-          list: [...copyItemList],
-          status: ApiCallStatus.SUCCESS,
-          error: null,
-        });
+        const createdItem = response.body;
+        return itemContext.dispatch(this.toFillStateAction([createdItem])).pipe(
+          tap(() => {
+            itemContext.patchState({
+              current: createdItem.id,
+              status: ApiCallStatus.SUCCESS,
+              error: null,
+            });
+          }),
+          map(() => response),
+        );
       }),
       catchError((error: HttpErrorResponse) =>
         itemContext.dispatch(new ItemActions.Failure(error)),
@@ -142,21 +154,45 @@ export class ItemState {
     );
   }
 
-  private responseToStateMap(
-    responseItem: Item.Response.PostSingle | Item.Response.GetItems[0],
-  ): Item.Model {
-    return {
-      id: responseItem.id,
-      name: responseItem.name,
-      picture: responseItem.picture,
-      shelfId: responseItem.shelf.id,
-      categoryValues: responseItem.categoryValues.map((categoryValue): CategoryValue.State => ({
-        id: categoryValue.id,
-        value: categoryValue.value,
-        categoryKeyId: categoryValue.categoryKey.id,
-        //important to use the response item here, as the response json doesn't actually have categoryValue.item.id to prevent recursive loops
-        itemId: responseItem.id,
+  @Action(ItemActions.FillState)
+  public fillState(
+    itemContext: StateContext<ItemStateModel>,
+    action: ItemActions.FillState,
+  ): void {
+    const retainedItems =
+      action.replaceShelfId === undefined
+        ? itemContext.getState().list
+        : itemContext
+            .getState()
+            .list.filter((item) => item.shelfId !== action.replaceShelfId);
+    const itemsById = new Map(retainedItems.map((item) => [item.id, item]));
+
+    for (const item of action.items) {
+      itemsById.set(item.id, item);
+    }
+
+    itemContext.patchState({
+      list: [...itemsById.values()],
+      status: ApiCallStatus.SUCCESS,
+      error: null,
+    });
+  }
+
+  private toFillStateAction(
+    responseItems: Array<Item.Response.PostSingle | Item.Response.GetItems[0]>,
+    replaceShelfId?: number,
+    replacedItemIds: Array<number> = [],
+  ): ItemActions.FillState {
+    return new ItemActions.FillState(
+      responseItems.map((responseItem) => ({
+        id: responseItem.id,
+        name: responseItem.name,
+        picture: responseItem.picture,
+        shelfId: responseItem.shelf.id,
       })),
-    };
+      responseItems.flatMap((responseItem) => responseItem.categoryValues),
+      replaceShelfId,
+      replacedItemIds,
+    );
   }
 }

@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from '../../api/api.service';
 import { ApiCallStatus } from '../ApiCallStatus';
 import { AuthActions } from './auth.actions';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { catchError, concatMap, map, Observable, tap, throwError } from 'rxjs';
 import { Auth } from '../../model/Auth';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -38,9 +38,11 @@ export class AuthState {
   ): Observable<Auth.Response.Login | void> {
     authContext.patchState({ status: ApiCallStatus.PENDING, error: null });
     return this.apiService.auth.login(action.loginRequest).pipe(
-      tap((response) => {
-        authContext.dispatch(new AuthActions.Success(response.accessToken));
-      }),
+      concatMap((response) =>
+        authContext
+          .dispatch(new AuthActions.Success(response.accessToken))
+          .pipe(map(() => response)),
+      ),
       catchError((error) => authContext.dispatch(new AuthActions.Failure(error))),
     );
   }
@@ -52,9 +54,11 @@ export class AuthState {
   ): Observable<Auth.Response.Registration | void> {
     authContext.patchState({ status: ApiCallStatus.PENDING, error: null });
     return this.apiService.auth.register(action.registrationRequest).pipe(
-      tap((response) => {
-        authContext.dispatch(new AuthActions.Success(response.accessToken));
-      }),
+      concatMap((response) =>
+        authContext
+          .dispatch(new AuthActions.Success(response.accessToken))
+          .pipe(map(() => response)),
+      ),
       catchError((error) => authContext.dispatch(new AuthActions.Failure(error))),
     );
   }
@@ -65,9 +69,11 @@ export class AuthState {
   ): Observable<Auth.Response.Refresh | void> {
     authContext.patchState({ status: ApiCallStatus.PENDING, error: null });
     return this.apiService.auth.refresh().pipe(
-      tap((response) => {
-        authContext.dispatch(new AuthActions.Success(response.accessToken));
-      }),
+      concatMap((response) =>
+        authContext
+          .dispatch(new AuthActions.Success(response.accessToken))
+          .pipe(map(() => response)),
+      ),
       catchError((error) => authContext.dispatch(new AuthActions.Failure(error))),
     );
   }

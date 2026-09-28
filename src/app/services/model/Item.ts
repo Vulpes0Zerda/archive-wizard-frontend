@@ -30,6 +30,5 @@ export namespace Item {
     name: string;
     picture: string;
     shelfId: number;
-    categoryValues: Array<CategoryValue.State>;
   };
 }

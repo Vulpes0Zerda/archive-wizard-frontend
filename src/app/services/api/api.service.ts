@@ -5,6 +5,8 @@ import { UserApi } from './user.api';
 import { CategoryGroupApi } from './category-group.api';
 import { ShelfApi } from './shelf.api';
 import { ItemApi } from './item.api';
+import { CategoryValueApi } from './category-value.api';
+import { CategoryKeyApi } from './category-key.api';
 
 @Injectable({
   providedIn: 'root',
@@ -18,5 +20,7 @@ export class ApiService {
     public readonly categoryGroup: CategoryGroupApi,
     public readonly shelf: ShelfApi,
     public readonly item: ItemApi,
+    public readonly categoryValue: CategoryValueApi,
+    public readonly categoryKey: CategoryKeyApi,
   ) {}
 }

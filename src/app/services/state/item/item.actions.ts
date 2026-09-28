@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Item } from '../../model/Item';
+import { CategoryValue } from '../../model/CategoryValue';
 
 export namespace ItemActions {
   const ACTION_SCOPE = '[Item]';
@@ -22,5 +23,15 @@ export namespace ItemActions {
   export class SetCurrent {
     static readonly type = `${ACTION_SCOPE} Set Current Item`;
     constructor(public readonly itemId: number) {}
+  }
+
+  export class FillState {
+    static readonly type = `${ACTION_SCOPE} Fill Item And Category Value State`;
+    constructor(
+      public readonly items: Array<Item.Model>,
+      public readonly categoryValue: Array<CategoryValue.Model>,
+      public readonly replaceShelfId?: number,
+      public readonly replacedItemIds: Array<number> = [],
+    ) {}
   }
 }
