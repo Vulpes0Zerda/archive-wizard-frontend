@@ -45,9 +45,6 @@ export class ShelfOverview implements OnInit {
         this.store.dispatch(new ShelfActions.FetchAll());
         this.store.dispatch(new CategoryGroupActions.FetchAll());
       }
-      if (this.currentShelf()) {
-        this.router.navigate(['/shelf', this.currentShelf()?.id]);
-      }
     });
   }
 
@@ -64,13 +61,9 @@ export class ShelfOverview implements OnInit {
   deleteShelfForm = form(this.deleteShelfFormModel);
 
   public setCurrentShelf(shelfId: number): void {
-    this.store.dispatch(new ShelfActions.SetCurrent(shelfId)).subscribe({
-      next: () => {
-        this.router.navigate(['/shelf', this.currentShelf()?.id]);
-      },
-      error: () => {},
-    });
+    this.router.navigate(['/shelf', shelfId]);
   }
+
   public showDeleteConfirmPopUp(shelfId: number): void {
     this.deletePopUpPayload.set(shelfId);
   }
@@ -80,7 +73,7 @@ export class ShelfOverview implements OnInit {
     if (this.pendingShelfDeleteName() === this.deleteShelfForm.name().value()) {
       console.log(this.deletePopUpPayload());
       this.store.dispatch(new ShelfActions.DeleteShelf(this.deletePopUpPayload() ?? 0)).subscribe({
-        next: (response) => {
+        next: () => {
           if (!this.currentShelf()) {
             this.router.navigate(['/']);
           }

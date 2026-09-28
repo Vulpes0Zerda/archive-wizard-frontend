@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { CategoryGroupStateModel, defaultCategoryGroupState } from './category.group.state.model';
+import {
+  CategoryGroupStateModel,
+  defaultCategoryGroupState,
+} from '../categoryGroup/category-group.state.model';
 import { CategoryGroup } from '../../model/CategoryGroup';
 import { CategoryGroupActions } from './category.group.actions';
 import { catchError, Observable, tap, throwError } from 'rxjs';

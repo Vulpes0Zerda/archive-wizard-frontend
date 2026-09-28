@@ -15,6 +15,9 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@a
 import { AuthInterceptorService } from './services/api/auth.interceptor.service';
 import { CategoryGroupState } from './services/state/categoryGroup/category.group.state';
 import { NgSelectOption } from '@angular/forms';
+import { ItemState } from './services/state/item/item.state';
+import { CategoryKeyState } from './services/state/categoryKey/category-key.state';
+import { CategoryValueState } from './services/state/categoryValue/category-value.state';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,7 +25,14 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideStore(
-      [AuthState, ShelfState, CategoryGroupState],
+      [
+        AuthState,
+        ShelfState,
+        CategoryGroupState,
+        ItemState,
+        CategoryKeyState,
+        CategoryValueState,
+      ],
       withNgxsReduxDevtoolsPlugin(),
       withNgxsFormPlugin(),
       withNgxsLoggerPlugin(),

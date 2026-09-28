@@ -30,7 +30,7 @@ export class Registration {
           break;
         case ApiCallStatus.SUCCESS:
           this.registrationModel.set(this.defaultRegistrationModel);
-          router.navigate(['']);
+          router.navigate(['/']);
           break;
         case ApiCallStatus.PENDING:
           break;

@@ -1,0 +1,19 @@
+<h1>{{ currentItem()?.name }}</h1>
+<button type="button" (click)="closed.emit()" aria-label="Close item details">Close</button>
+@if (currentItem()?.picture !== '') {
+  <img [src]="currentItem()?.picture" [alt]="`Image of Item ${currentItem()?.name}`" />
+} @else {
+  <img />
+}
+<form>
+  @for (key of allKeysInItem(); track key.id) {
+    <label [for]="'category-key-' + key.id">{{ key.key }}</label>
+    <input
+      type="text"
+      [id]="'category-key-' + key.id"
+      [value]="getValue(key.id)"
+      (input)="updateValue(key.id, $event)"
+      (keydown)="saveOnEnter($event)"
+    />
+  }
+</form>

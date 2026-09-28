@@ -4,11 +4,10 @@ import { ShelfActions } from './shelf.actions';
 import { defaultShelfState, ShelfStateModel } from './shelf.state.model';
 import { ApiService } from '../../api/api.service';
 import { ApiCallStatus } from '../ApiCallStatus';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { catchError, concatMap, map, Observable, tap, throwError } from 'rxjs';
 import { Shelf } from '../../model/Shelf';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { append, patch, safePatch } from '@ngxs/store/operators';
-import { CategoryGroup } from '../../model/CategoryGroup';
+import { ItemActions } from '../item/item.actions';
 
 @State<ShelfStateModel>({
   name: 'shelf',
@@ -44,19 +43,21 @@ export class ShelfState {
     shelfContext.patchState({ status: ApiCallStatus.PENDING, error: null });
     return this.apiService.shelf.getShelfs().pipe(
       tap((response) => {
-        if (response.body) {
-          shelfContext.setState({
-            ...shelfContext.getState(),
-            status: ApiCallStatus.SUCCESS,
-            list: [
-              ...response.body.map<Shelf.Model>((shelf): Shelf.Model => ({
-                ...shelf,
-                categoryGroupId: shelf.categoryGroup.id,
-              })),
-            ],
-            error: null,
-          });
-        }
+        const list = (response.body ?? []).map<Shelf.Model>((shelf): Shelf.Model => ({
+          ...shelf,
+          categoryGroupId: shelf.categoryGroup.id,
+        }));
+        const current = list.some((shelf) => shelf.id === shelfContext.getState().current)
+          ? shelfContext.getState().current
+          : null;
+
+        shelfContext.setState({
+          ...shelfContext.getState(),
+          status: ApiCallStatus.SUCCESS,
+          list,
+          current,
+          error: null,
+        });
       }),
       catchError((error: HttpErrorResponse) =>
         shelfContext.dispatch(new ShelfActions.Failure(error)),
@@ -71,8 +72,6 @@ export class ShelfState {
   ): Observable<never> {
     shelfContext.setState({
       ...shelfContext.getState(),
-      current: null,
-      list: [],
       status: ApiCallStatus.FAILURE,
       error: action.error,
     });
@@ -83,9 +82,26 @@ export class ShelfState {
   public setCurrent(
     shelfContext: StateContext<ShelfStateModel>,
     action: ShelfActions.SetCurrent,
-  ): void {
-    shelfContext.patchState({ current: action.shelfId });
-    //TODO: Dispatch action to fetch all items in the shelf
+  ): Observable<void | never> {
+    if (shelfContext.getState().list.findIndex((shelf) => shelf.id === action.shelfId) !== -1) {
+      shelfContext.patchState({ current: action.shelfId });
+      return shelfContext.dispatch(new ItemActions.FetchAll(action.shelfId)).pipe(
+        map(() => undefined),
+      );
+    }
+
+    return shelfContext.dispatch(new ShelfActions.FetchAll()).pipe(
+      concatMap(() => {
+        if (!shelfContext.getState().list.some((shelf) => shelf.id === action.shelfId)) {
+          return throwError(() => new Error(`Could not find the shelf id of ${action.shelfId}.`));
+        }
+
+        shelfContext.patchState({ current: action.shelfId });
+        return shelfContext.dispatch(new ItemActions.FetchAll(action.shelfId)).pipe(
+          map(() => undefined),
+        );
+      }),
+    );
   }
 
   @Action(ShelfActions.CreateShelf)
@@ -94,7 +110,6 @@ export class ShelfState {
     action: ShelfActions.CreateShelf,
   ): Observable<HttpResponse<Shelf.Response.PostSingle> | void> {
     shelfContext.patchState({ status: ApiCallStatus.PENDING, error: null });
-    console.log(`Trying to dispatch payload: ${action.createShelfRequest}`);
     return this.apiService.shelf.postShelf(action.createShelfRequest).pipe(
       tap((response) => {
         const copyShelfList: Array<Shelf.Model> = [...shelfContext.getState().list];
