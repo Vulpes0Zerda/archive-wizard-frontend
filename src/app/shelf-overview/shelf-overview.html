@@ -2,15 +2,17 @@
   <div
     class="bg-gray-800/50 flex absolute top-0 left-0 justify-items-center items-center justify-center justify-content-center content-center w-screen h-screen"
   >
-    <div class="background-dark-primary rounded-xs block p-8">
+    <div
+      class="background-dark-primary rounded-xs block p-8 grid gird-cols-none grid-rows-[2fr_6fr] grid-gap-2"
+    >
       <h1>
         Are you sure you want to delete
         {{ pendingShelfDeleteName() }}?
       </h1>
-      <p>
-        This action is not reversable and will result in the loss of all the items in this shelf.
-      </p>
       <form (submit)="deleteShelf($event)" (reset)="deleteShelfCancel($event)">
+        <p>
+          This action is not reversable and will result in the loss of all the items in this shelf.
+        </p>
         <label for="delete-confirm-field">To confirm please enter the Name of your shelf:</label>
         <input
           id="delete-confirm-field"
@@ -18,14 +20,14 @@
           [formField]="deleteShelfForm.name"
           [placeholder]="pendingShelfDeleteName()"
         />
-        <button type="reset">Cancel</button>
+        <button type="reset" class="">Cancel</button>
         <button type="submit">Ok</button>
       </form>
     </div>
   </div>
 }
 <div
-  class="grid grid-cols-[min-content_auto] grid-rows-none content-center w-full align-items-center items-center"
+  class="grid grid-cols-[min-content_auto] grid-rows-none content-center w-full max-h-screen align-items-center items-center"
 >
   @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
     <button type="button" class="logoutButton authButton size-min" (click)="logOut()">
@@ -48,7 +50,7 @@
     @if (apiStatus() === API_STATUS_TYPE.SUCCESS) {
       @for (shelf of shelfList(); track shelf.id) {
         <li
-          class="shelf-container grid grid-col-[auto_min-content] grid-rows-none grid-flow-col items-center content-stretch justify-stretch justify-items-center rounded-xs px-6 py-2"
+          class="shelf-container grid grid-col-[auto_min-content] grid-rows-none grid-flow-col items-center content-stretch justify-stretch justify-items-center rounded-xs px-6 py-2 mx-3"
         >
           <button class="w-full text-left justify-self-start" (click)="setCurrentShelf(shelf.id)">
             {{ shelf.name }}
@@ -63,7 +65,7 @@
       } @empty {
         <li class="button">It looks empty in here. It's time you create your first Shelf!</li>
       }
-      <li class="shelf-container grid justify-stretch justify-item-stretch rounded-xs">
+      <li class="shelf-container grid justify-stretch justify-item-stretch rounded-xs mx-3">
         <button class="" [routerLink]="['/new-shelf']">+</button>
       </li>
     } @else {

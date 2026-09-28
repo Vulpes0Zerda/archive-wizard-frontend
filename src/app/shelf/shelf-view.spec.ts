@@ -12,6 +12,8 @@ import { CategoryKeyState } from '../services/state/categoryKey/category-key.sta
 import { CategoryValueState } from '../services/state/categoryValue/category-value.state';
 import { CategoryKey } from '../services/model/CategoryKey';
 import { CategoryValue } from '../services/model/CategoryValue';
+import { AuthState } from '../services/state/auth/auth.state';
+import { defaultAuthState } from '../services/state/auth/auth.state.model';
 
 describe('ShelfView', () => {
   let component: ShelfView;
@@ -24,7 +26,13 @@ describe('ShelfView', () => {
       imports: [ShelfView],
       providers: [
         provideRouter(routes),
-        provideStore([ShelfState, ItemState, CategoryKeyState, CategoryValueState]),
+        provideStore([
+          AuthState,
+          ShelfState,
+          ItemState,
+          CategoryKeyState,
+          CategoryValueState,
+        ]),
         {
           provide: ApiService,
           useValue: {
@@ -36,6 +44,10 @@ describe('ShelfView', () => {
               updateCategoryValues: () =>
                 of(new HttpResponse<CategoryValue.Response.UpdateAll>({ body: [] })),
             },
+            item: {
+              deleteItem: (itemId: number) =>
+                of(new HttpResponse<number>({ body: itemId })),
+            },
           },
         },
       ],
@@ -44,6 +56,7 @@ describe('ShelfView', () => {
     store = TestBed.inject(Store);
     router = TestBed.inject(Router);
     store.reset({
+      auth: defaultAuthState,
       shelf: {
         current: 2,
         list: [{ id: 2, categoryGroupId: 3, name: 'Shelf', position: 0 }],
@@ -57,7 +70,11 @@ describe('ShelfView', () => {
         status: 0,
       },
       categoryKey: { list: [], status: 0, error: null },
-      categoryValue: { list: [], status: 0, error: null },
+      categoryValue: {
+        list: [{ id: 4, value: 'Blue', itemId: 10, categoryKeyId: 3 }],
+        status: 0,
+        error: null,
+      },
     });
 
     fixture = TestBed.createComponent(ShelfView);
@@ -86,5 +103,22 @@ describe('ShelfView', () => {
 
     expect(fixture.nativeElement.querySelector('app-add-item')).not.toBeNull();
     expect(router.url).toBe('/');
+  });
+
+  it('deletes an item and its category values from state', async () => {
+    const deleteButton: HTMLButtonElement = fixture.nativeElement.querySelector(
+      '[aria-label="Delete item Item"]',
+    );
+    deleteButton.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(store.selectSnapshot(ItemState.getAllItems)).toEqual([]);
+    expect(
+      store.selectSnapshot(
+        (state: { categoryValue: { list: Array<CategoryValue.State> } }) =>
+          state.categoryValue.list,
+      ),
+    ).toEqual([]);
   });
 });

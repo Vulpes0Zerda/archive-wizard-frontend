@@ -91,8 +91,8 @@ describe('ItemView', () => {
       ),
     ).toEqual([{ id: null, value: 'Blue', itemId: 5, categoryKeyId: 3 }]);
 
-    input.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }),
+    input.form?.dispatchEvent(
+      new Event('submit', { bubbles: true, cancelable: true }),
     );
     await fixture.whenStable();
 

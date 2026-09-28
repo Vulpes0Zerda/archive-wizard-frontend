@@ -154,17 +154,38 @@ export class ItemState {
     );
   }
 
+  @Action(ItemActions.DeleteItem)
+  public deleteItem(
+    itemContext: StateContext<ItemStateModel>,
+    action: ItemActions.DeleteItem,
+  ): Observable<HttpResponse<number> | void> {
+    itemContext.patchState({ status: ApiCallStatus.PENDING, error: null });
+    return this.apiService.item.deleteItem(action.itemId).pipe(
+      concatMap((response) =>
+        itemContext
+          .dispatch(
+            new ItemActions.FillState([], [], undefined, [action.itemId], [action.itemId]),
+          )
+          .pipe(map(() => response)),
+      ),
+      catchError((error: HttpErrorResponse) =>
+        itemContext.dispatch(new ItemActions.Failure(error)),
+      ),
+    );
+  }
+
   @Action(ItemActions.FillState)
   public fillState(
     itemContext: StateContext<ItemStateModel>,
     action: ItemActions.FillState,
   ): void {
-    const retainedItems =
-      action.replaceShelfId === undefined
-        ? itemContext.getState().list
-        : itemContext
-            .getState()
-            .list.filter((item) => item.shelfId !== action.replaceShelfId);
+    const state = itemContext.getState();
+    const removedItemIds = new Set(action.removedItemIds);
+    const retainedItems = state.list.filter(
+      (item) =>
+        !removedItemIds.has(item.id) &&
+        (action.replaceShelfId === undefined || item.shelfId !== action.replaceShelfId),
+    );
     const itemsById = new Map(retainedItems.map((item) => [item.id, item]));
 
     for (const item of action.items) {
@@ -173,6 +194,7 @@ export class ItemState {
 
     itemContext.patchState({
       list: [...itemsById.values()],
+      current: state.current !== null && removedItemIds.has(state.current) ? null : state.current,
       status: ApiCallStatus.SUCCESS,
       error: null,
     });
@@ -190,7 +212,12 @@ export class ItemState {
         picture: responseItem.picture,
         shelfId: responseItem.shelf.id,
       })),
-      responseItems.flatMap((responseItem) => responseItem.categoryValues),
+      responseItems.flatMap((responseItem) =>
+        responseItem.categoryValues.map((categoryValue) => ({
+          ...categoryValue,
+          itemId: responseItem.id,
+        })),
+      ),
       replaceShelfId,
       replacedItemIds,
     );

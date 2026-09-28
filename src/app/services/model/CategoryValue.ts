@@ -21,8 +21,10 @@ export namespace CategoryValue {
   export type Model = {
     id: number;
     value: string;
-    item: Item.Model;
-    categoryKey: CategoryKey.Model;
+    item?: Item.Model;
+    categoryKey?: CategoryKey.Model;
+    itemId?: number;
+    categoryKeyId?: number;
   };
 
   export type State = {

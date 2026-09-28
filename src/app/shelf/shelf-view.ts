@@ -1,7 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, Signal, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { distinctUntilChanged, filter, map, switchMap } from 'rxjs';
+import { combineLatest, distinctUntilChanged, filter, map, switchMap } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { ItemActions } from '../services/state/item/item.actions';
 import { Shelf } from '../services/model/Shelf';
@@ -12,9 +13,12 @@ import { ItemState } from '../services/state/item/item.state';
 import { ShelfActions } from '../services/state/shelf/shelf.actions';
 import { AddItem } from '../add-item/add-item';
 import { ItemView } from '../item/item-view';
+import { AddItemSvg } from '../icons/add-item/add-item';
+import { AuthState } from '../services/state/auth/auth.state';
+import { CloseSvg } from '../icons/close-svg/close-svg';
 
 @Component({
-  imports: [AddItem, ItemView],
+  imports: [AddItem, ItemView, AddItemSvg, CloseSvg],
   selector: 'app-shelf-view',
   styleUrl: './shelf-view.scss',
   templateUrl: './shelf-view.html',
@@ -25,6 +29,7 @@ export class ShelfView {
   protected itemList: Signal<Array<Item.Model>>;
   protected currentShelfItems: Signal<Array<Item.Model>>;
   protected sidebarMode = signal<'item' | 'new-item' | null>(null);
+  protected deleteError = signal<string | null>(null);
 
   constructor(
     protected store: Store,
@@ -37,10 +42,25 @@ export class ShelfView {
       this.itemList().filter((item) => item.shelfId === this.currentShelf()?.id),
     );
 
-    route.paramMap
+    combineLatest([
+      route.paramMap,
+      store.select(AuthState.getStatus),
+      store.select(ShelfState.getStatus),
+    ])
       .pipe(
-        map((params) => Number(params.get('shelfId'))),
-        filter((shelfId) => Number.isInteger(shelfId) && shelfId > 0),
+        map(([params, authStatus, shelfStatus]) => ({
+          shelfId: Number(params.get('shelfId')),
+          authStatus,
+          shelfStatus,
+        })),
+        filter(
+          ({ shelfId, authStatus, shelfStatus }) =>
+            Number.isInteger(shelfId) &&
+            shelfId > 0 &&
+            authStatus === ApiCallStatus.SUCCESS &&
+            shelfStatus === ApiCallStatus.SUCCESS,
+        ),
+        map(({ shelfId }) => shelfId),
         distinctUntilChanged(),
         switchMap((shelfId) => {
           this.sidebarMode.set(null);
@@ -63,6 +83,26 @@ export class ShelfView {
 
   protected closeSidebar(): void {
     this.sidebarMode.set(null);
+  }
+
+  protected deleteItem(itemId: number): void {
+    this.deleteError.set(null);
+    const wasCurrentItem = this.store.selectSnapshot(ItemState.getCurrentItem)?.id === itemId;
+
+    this.store.dispatch(new ItemActions.DeleteItem(itemId)).subscribe({
+      next: () => {
+        if (wasCurrentItem) {
+          this.sidebarMode.set(null);
+        }
+      },
+      error: (error: unknown) => {
+        this.deleteError.set(
+          error instanceof HttpErrorResponse
+            ? error.error?.message ?? error.message
+            : 'Unable to delete the item. Please try again.',
+        );
+      },
+    });
   }
 
   protected createItem(newItem: Item.Request.postSingle): void {

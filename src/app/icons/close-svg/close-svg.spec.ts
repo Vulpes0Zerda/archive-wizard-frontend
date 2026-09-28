@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AddItem } from './add-item';
+import { CloseSvg } from './close-svg';
 
-describe('AddItem', () => {
-  let component: AddItem;
-  let fixture: ComponentFixture<AddItem>;
+describe('CloseSvg', () => {
+  let component: CloseSvg;
+  let fixture: ComponentFixture<CloseSvg>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AddItem],
+      imports: [CloseSvg],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AddItem);
+    fixture = TestBed.createComponent(CloseSvg);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

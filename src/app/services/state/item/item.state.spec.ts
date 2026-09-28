@@ -29,7 +29,18 @@ describe('Item store', () => {
                         name: 'Fetched item',
                         picture: 'picture',
                         shelf: { id: 2, categoryGroupId: 3, name: 'Shelf', position: 0 },
-                        categoryValues: [],
+                        categoryValues: [
+                          {
+                            id: 12,
+                            value: 'yellow',
+                            categoryKey: {
+                              id: 8,
+                              categoryGroup: { id: 3, name: 'Group' },
+                              key: 'Color',
+                              position: 0,
+                            },
+                          },
+                        ],
                       },
                     ],
                   }),
@@ -53,6 +64,11 @@ describe('Item store', () => {
     expect(store.selectSnapshot(ItemState.getAllItems)).toEqual([
       { id: 1, name: 'Fetched item', picture: 'picture', shelfId: 2 },
     ]);
+    expect(
+      store.selectSnapshot(
+        (state: { categoryValue: CategoryValueStateModel }) => state.categoryValue.list,
+      ),
+    ).toEqual([{ id: 12, value: 'yellow', itemId: 1, categoryKeyId: 8 }]);
   });
 
   it('should fill both states and replace stale category values for the item', async () => {
@@ -116,5 +132,17 @@ describe('Item store', () => {
       { id: 8, value: 'other shelf value', itemId: otherShelfItem.id, categoryKeyId: categoryKey.id },
       { id: 6, value: 'green', itemId: item.id, categoryKeyId: categoryKey.id },
     ]);
+  });
+
+  it('preserves the selected item when refreshing its shelf list', async () => {
+    const item = { id: 1, name: 'Item', picture: 'picture', shelfId: 2 };
+    await firstValueFrom(store.dispatch(new ItemActions.FillState([item], [])));
+    await firstValueFrom(store.dispatch(new ItemActions.SetCurrent(item.id)));
+
+    await firstValueFrom(
+      store.dispatch(new ItemActions.FillState([item], [], item.shelfId, [item.id])),
+    );
+
+    expect(store.selectSnapshot(ItemState.getCurrentItem)).toEqual(item);
   });
 });

@@ -10,9 +10,10 @@ import { CategoryValue } from '../services/model/CategoryValue';
 import { CategoryValueState } from '../services/state/categoryValue/category-value.state';
 import { CategoryKeyActions } from '../services/state/categoryKey/category-key.actions';
 import { CategoryValueActions } from '../services/state/categoryValue/category-value.actions';
+import { CloseSvg } from '../icons/close-svg/close-svg';
 
 @Component({
-  imports: [],
+  imports: [CloseSvg],
   selector: 'app-item-view',
   styleUrl: './item-view.scss',
   templateUrl: './item-view.html',
@@ -53,7 +54,6 @@ export class ItemView implements OnDestroy {
         this.store.dispatch(new CategoryKeyActions.FetchAll(categoryGroupId));
       }
     });
-
   }
 
   protected getValue(categoryKeyId: number): string {
@@ -89,11 +89,7 @@ export class ItemView implements OnDestroy {
     );
   }
 
-  protected saveOnEnter(event: KeyboardEvent): void {
-    if (event.key !== 'Enter') {
-      return;
-    }
-
+  protected saveOnSubmit(event: Event): void {
     event.preventDefault();
     const itemId = this.currentItem()?.id;
     if (itemId !== undefined) {

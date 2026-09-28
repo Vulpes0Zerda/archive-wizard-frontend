@@ -73,15 +73,7 @@ export class CategoryValueState {
       .map(({ value, itemId, categoryKeyId }) => ({ value, itemId, categoryKeyId }));
     return this.apiService.categoryValue.updateCategoryValues(valuesToUpdate).pipe(
       tap((response) => {
-        categoryValueContext.setState({
-          ...categoryValueContext.getState(),
-          list: this.mergeValues(
-            categoryValueContext.getState().list,
-            response.body ?? [],
-          ),
-          status: ApiCallStatus.SUCCESS,
-          error: null,
-        });
+        categoryValueContext.patchState({ status: ApiCallStatus.SUCCESS, error: null });
       }),
       catchError((error) => categoryValueContext.dispatch(new CategoryValueActions.Failure(error))),
     );
@@ -115,11 +107,28 @@ export class CategoryValueState {
     );
 
     for (const responseValue of responseValues) {
+      const itemId = responseValue.item?.id ?? responseValue.itemId;
+      const categoryKeyId = responseValue.categoryKey?.id ?? responseValue.categoryKeyId;
+      if (itemId === undefined || categoryKeyId === undefined) {
+        const existingValue = currentValues.find((value) => value.id === responseValue.id);
+        if (!existingValue) {
+          throw new Error(
+            `Cannot associate category value ${responseValue.id} with an item and category key.`,
+          );
+        }
+
+        valuesByItemAndKey.set(`${existingValue.itemId}:${existingValue.categoryKeyId}`, {
+          ...existingValue,
+          value: responseValue.value,
+        });
+        continue;
+      }
+
       const value: CategoryValue.State = {
         id: responseValue.id,
         value: responseValue.value,
-        categoryKeyId: responseValue.categoryKey.id,
-        itemId: responseValue.item.id,
+        categoryKeyId,
+        itemId,
       };
       valuesByItemAndKey.set(`${value.itemId}:${value.categoryKeyId}`, value);
     }

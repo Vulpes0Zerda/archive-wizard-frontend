@@ -1,4 +1,56 @@
-<section aria-labelledby="add-item-heading">
-  <button type="button" (click)="closed.emit()" aria-label="Close add item panel">Close</button>
-  <h2 id="add-item-heading">Add item</h2>
+<section
+  aria-labelledby="add-item-heading"
+  class="background-dark-secondary relative p-3 h-full max-h-screen overflow-scroll"
+>
+  <button
+    type="button"
+    (click)="cancel()"
+    aria-label="Close add item form"
+    class="absolute right-0 top-0 size-[3rem]"
+  >
+    <app-close-svg />
+  </button>
+  <h1 id="add-item-heading" class="mb-6 text-xl">Add item</h1>
+
+  <form [formGroup]="itemForm" (ngSubmit)="submit()" class="grid gap-4">
+    <div class="grid gap-2">
+      <label for="item-name">Name</label>
+      <input
+        id="item-name"
+        type="text"
+        formControlName="name"
+        required
+        maxlength="100"
+        autocomplete="off"
+        class="background-light-primary w-full rounded-xs p-2"
+      />
+      @if (itemForm.controls.name.touched && itemForm.controls.name.hasError('required')) {
+        <p class="text-sm text-red-700" role="alert">Enter an item name.</p>
+      }
+      @if (itemForm.controls.name.touched && itemForm.controls.name.hasError('maxlength')) {
+        <p class="text-sm text-red-700" role="alert">The name must be 100 characters or fewer.</p>
+      }
+    </div>
+
+    @if (submitError(); as error) {
+      <p class="text-sm text-red-700" role="alert">{{ error }}</p>
+    }
+
+    <div class="mt-2 flex justify-end gap-3">
+      <button
+        type="button"
+        (click)="cancel()"
+        class="background-light-primary rounded-xs px-4 py-2"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        [disabled]="itemForm.invalid || submitting()"
+        class="background-light-primary rounded-xs px-4 py-2 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {{ submitting() ? 'Adding…' : 'Add item' }}
+      </button>
+    </div>
+  </form>
 </section>

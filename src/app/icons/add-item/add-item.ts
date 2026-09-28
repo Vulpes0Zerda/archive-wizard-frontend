@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-add-item',
-  styleUrl: './add-item.scss',
-  templateUrl: './add-item.html',
+  selector: 'app-add-item-svg',
+  styleUrl: './add-item-svg.scss',
+  templateUrl: './add-item-svg.html',
 })
-export class AddItem {}
+export class AddItemSvg {}

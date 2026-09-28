@@ -27,6 +27,7 @@ export class ShelfOverview implements OnInit {
   protected shelfList: Signal<Array<Shelf.Model>>;
   protected deletePopUpPayload: WritableSignal<number | null>;
   protected pendingShelfDeleteName: Signal<string | undefined>;
+  private hasLoadedForAuthenticatedSession = false;
 
   public constructor(
     protected store: Store,
@@ -41,7 +42,13 @@ export class ShelfOverview implements OnInit {
       return this.shelfList().find((shelf) => shelf.id === this.deletePopUpPayload())?.name;
     });
     effect(() => {
-      if (this.apiStatus() === ApiCallStatus.SUCCESS && this.shelfStatus() === ApiCallStatus.IDLE) {
+      if (this.apiStatus() !== ApiCallStatus.SUCCESS) {
+        this.hasLoadedForAuthenticatedSession = false;
+        return;
+      }
+
+      if (!this.hasLoadedForAuthenticatedSession) {
+        this.hasLoadedForAuthenticatedSession = true;
         this.store.dispatch(new ShelfActions.FetchAll());
         this.store.dispatch(new CategoryGroupActions.FetchAll());
       }

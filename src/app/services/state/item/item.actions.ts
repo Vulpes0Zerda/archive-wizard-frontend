@@ -32,6 +32,7 @@ export namespace ItemActions {
       public readonly categoryValue: Array<CategoryValue.Model>,
       public readonly replaceShelfId?: number,
       public readonly replacedItemIds: Array<number> = [],
+      public readonly removedItemIds: Array<number> = [],
     ) {}
   }
 }
