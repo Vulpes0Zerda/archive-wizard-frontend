@@ -1,22 +1,24 @@
-<div class="grid grid-cols-[5fr_3fr] grid-rows-none max-h-full h-full overflow-scroll">
-  <section>
+<div class="grid grid-cols-[1fr_auto] grid-rows-none max-h-full h-full">
+  <section class="overflow-y-scroll h-screen">
     <h1 class="text-xl text-center px-2 py-5">
       {{ currentShelf()?.name }}
     </h1>
     @if (deleteError(); as error) {
       <p class="px-4 text-sm text-red-700" role="alert">{{ error }}</p>
     }
-    <div class="shelf flex flex-wrap basis-sm content-stretch items-stretch align-center">
+    <div
+      class="shelf grid grid-rows-[repeat(auto-fill,_11rem)] grid-cols-[repeat(auto-fill,_8rem)] gap-3 basis-sm content-start items-stretch align-center"
+    >
       @for (item of currentShelfItems(); track item.id) {
-        <div class="relative min-h-min min-w-min h-full p-4">
+        <div class="relative min-h-min min-w-min h-full">
           <button
             type="button"
-            class="min-h-min min-w-min h-full"
+            class="min-h-min min-w-min p-4 background-dark-secondary rounded-lg h-full"
             (click)="selectItem(item.id)"
           >
             <figure
               [id]="`${item.name}-${item.id}`"
-              class="item add-item grid grid-cols-[1fr] grid-rows-[auto_1fr] min-w-min min-h-min w-[5rem] justify-center justify-items-center h-full"
+              class="background-dark-secondary item add-item grid grid-cols-[1fr] grid-rows-[auto_1fr] min-w-min min-h-min w-full justify-center justify-items-center h-full rounded-sm"
             >
               @if (item.picture !== '') {
                 <img
@@ -27,14 +29,14 @@
               } @else {
                 <img class="p-[10%] aspect-square overflow-visible" src="insert-picture-icon.png" />
               }
-              <h2 class="text-center self-end">{{ item.name }}</h2>
+              <h2 class="text-center self-end py-1">{{ item.name }}</h2>
             </figure>
           </button>
           <button
             type="button"
             [attr.aria-label]="'Delete item ' + item.name"
             title="Delete item"
-            class="absolute right-1 top-1 size-7 rounded-xs p-1 text-red-700 hover:bg-red-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
+            class="absolute right-0 top-0 size-[1.2rem] rounded-xs p-1 box-content origin-top-right"
             (click)="deleteItem(item.id)"
           >
             <app-close-svg />
@@ -53,8 +55,8 @@
     </div>
   </section>
   @if (sidebarMode() === 'item') {
-    <app-item-view (closed)="closeSidebar()" />
+    <app-item-view (closed)="closeSidebar()" class="w-full background-dark-secondary" />
   } @else if (sidebarMode() === 'new-item') {
-    <app-add-item (closed)="closeSidebar()" />
+    <app-add-item (closed)="closeSidebar()" class="w-full background-dark-secondary" />
   }
 </div>

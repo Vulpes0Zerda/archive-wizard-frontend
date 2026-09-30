@@ -1,28 +1,34 @@
-<div class="grid grid-cols-1 grid-rows-[1fr_3fr_auto] overflow-scroll h-full">
+<div
+  class="grid grid-cols-none grid-rows-[1fr_3fr_auto] overflow-y-scroll overflow-x-hidden h-screen min-w-min w-[23rem] p-6 relative"
+>
   <button
     type="button"
     (click)="closed.emit()"
-    class="absolute right-0 top-0 size-[3rem]"
+    class="absolute right-0 top-0 size-[2.5rem] p-2 cursor-pointer"
     aria-label="Close item details"
   >
     <app-close-svg />
   </button>
-  <h1 class="text-xl text-center px-2 py-5">{{ currentItem()?.name }}</h1>
+  <h1 class="text-xl text-center px-2 py-2">{{ currentItem()?.name }}</h1>
   @if (currentItem()?.picture !== '') {
-    <img [src]="currentItem()?.picture" [alt]="`Image of Item ${currentItem()?.name}`" />
+    <img
+      [src]="currentItem()?.picture"
+      [alt]="`Image of Item ${currentItem()?.name}`"
+      class="p-3 aspect-square overflow-visible w-[8rem] justify-self-center"
+    />
   } @else {
-    <img class="p-3 aspect-square overflow-visible w-[8rem]" src="insert-picture-icon.png" />
+    <img
+      class="p-3 aspect-square overflow-visible w-[8rem] justify-self-center"
+      src="insert-picture-icon.png"
+    />
   }
-  <form
-    class="grid grid-cols-1 grid-rows-(auto-fill,_10rem) overflow-y-scroll"
-    (submit)="saveOnSubmit($event)"
-  >
+  <form class="grid grid-cols-1 grid-rows-(auto-fill,_10rem) gap-3" (submit)="saveOnSubmit($event)">
     @for (key of allKeysInItem(); track key.id) {
       <label [for]="'category-key-' + key.id">{{ key.key }}</label>
       <input
         type="text"
         [id]="'category-key-' + key.id"
-        class="background-light-primary w-full rounded-xs p-1 m-2"
+        class="background-light-primary w-full rounded-xs p-1 box-content"
         [value]="getValue(key.id)"
         (input)="updateValue(key.id, $event)"
       />

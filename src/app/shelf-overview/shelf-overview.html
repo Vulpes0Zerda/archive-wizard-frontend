@@ -1,27 +1,44 @@
 @if (pendingShelfDeleteName()) {
   <div
-    class="bg-gray-800/50 flex absolute top-0 left-0 justify-items-center items-center justify-center justify-content-center content-center w-screen h-screen"
+    class="bg-gray-500/40 flex absolute top-0 left-0 justify-items-center items-center justify-center justify-content-center content-center w-screen h-screen z-10"
   >
     <div
-      class="background-dark-primary rounded-xs block p-8 grid gird-cols-none grid-rows-[2fr_6fr] grid-gap-2"
+      class="background-dark-primary rounded-lg block px-10 py-6 grid gird-cols-none grid-rows-[2fr_auto] gap-6 justify-content-center justify-center align-stretch"
     >
-      <h1>
+      <h1 class="text-center text-xl">
         Are you sure you want to delete
         {{ pendingShelfDeleteName() }}?
       </h1>
-      <form (submit)="deleteShelf($event)" (reset)="deleteShelfCancel($event)">
-        <p>
+      <form
+        (submit)="deleteShelf($event)"
+        (reset)="deleteShelfCancel($event)"
+        class="grid grid-cols-2 grid-rows-[3fr_2fr_2fr_4fr] justify-items-center justify-center content-center items-center gap-4"
+      >
+        <p class="col-span-full">
           This action is not reversable and will result in the loss of all the items in this shelf.
         </p>
-        <label for="delete-confirm-field">To confirm please enter the Name of your shelf:</label>
+        <label for="delete-confirm-field" class="text-center col-span-full"
+          >To confirm please enter the Name of your shelf:</label
+        >
         <input
           id="delete-confirm-field"
           type="text"
+          class="background-light-primary rounded-xs col-span-full p-1 max-w-[25rem]"
           [formField]="deleteShelfForm.name"
           [placeholder]="pendingShelfDeleteName()"
         />
-        <button type="reset" class="">Cancel</button>
-        <button type="submit">Ok</button>
+        <button
+          type="reset"
+          class="background-light-primary box-content rounded-xs min-w-min min-h-min w-[7rem] h-[2rem] px-3 py-1"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="success-primary box-content rounded-xs min-w-min min-h-min w-[7rem] h-[2rem] px-3 py-1"
+        >
+          Delete
+        </button>
       </form>
     </div>
   </div>
@@ -43,7 +60,7 @@
     <i>Archive<br />Wizzard</i>
   </h1>
 </div>
-<nav>
+<nav class="overflow-y-scroll overflow-x-hidden">
   <ul
     class="h-full gap-3 grid grid-col-[100%] grid-rows-[repeat(auto-fit,_5rem)] justify-stretch justify-items-stretch items-stretch"
   >
